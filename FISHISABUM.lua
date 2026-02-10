@@ -1,4 +1,4 @@
-for i,b in pairs(workspace.FE.Actions:GetChildren()) do
+void black lookfor i,b in pairs(workspace.FE.Actions:GetChildren()) do
     if b.Name == " " then
     b:Destroy()
 end
@@ -46,8 +46,8 @@ local WindUI = loadstring(game:HttpGet(
 
 -- */  Window  /* --
 local Window = WindUI:CreateWindow({
-    Title = "Twistzz Script | TPS STREET SOCCER Premium V0.01",
-    Folder = "Twistzz Script",
+    Title = "Cezar Hub | TPS STREET SOCCER Safe V0.01",
+    Folder = "Cezar Hub",
     IconSize = 22 * 2,
     NewElements = true,
     Size = UDim2.fromOffset(550, 500),
@@ -159,8 +159,20 @@ local ST = Window:Section({
 
     
                 local RC = M:Tab({
-        Title = "Reacts",
+        Title = "React",
         Icon = "apple",
+        IconColor = blue,
+    })
+
+                local GKRC = M:Tab({
+        Title = "Goalkeeper React",
+        Icon = "apple",
+        IconColor = blue,
+    })
+
+                local Khalid = M:Tab({
+        Title = "Khalid",
+        Icon = "user",
         IconColor = blue,
     })
 
@@ -235,7 +247,9 @@ local ST = Window:Section({
         
   ------------------------------------------------ REACH TAB ----------------------------------------------
 local reachEnabled = false
-local reachDistance = 1
+local reachX = 1
+local reachY = 1
+local reachZ = 1
 local reachConnection
 
       R:Section({
@@ -260,7 +274,7 @@ reachEnabled = Value
         if reachConnection then reachConnection:Disconnect() end
         reachConnection = game:GetService("RunService").RenderStepped:Connect(function()
             local player = game.Players.LocalPlayer
-            local character = player and player.Character
+            local character = player.Character
             local rootPart = character and character:FindFirstChild("HumanoidRootPart")
             local humanoid = character and character:FindFirstChild("Humanoid")
 
@@ -269,8 +283,8 @@ reachEnabled = Value
             local tps = workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS")
             if not tps then return end
 
-            local distance = (rootPart.Position - tps.Position).Magnitude
-            if distance <= reachDistance then
+            local delta = tps.Position - rootPart.Position
+            if math.abs(delta.X) <= reachX and math.abs(delta.Y) <= reachY and math.abs(delta.Z) <= reachZ then
                 local preferredFoot = game.Lighting:FindFirstChild(player.Name) and game.Lighting[player.Name]:FindFirstChild("PreferredFoot")
                 if preferredFoot then
                     local limbName = (humanoid.RigType == Enum.HumanoidRigType.R6)
@@ -290,57 +304,44 @@ reachEnabled = Value
 
 
     R:Slider({
-        Title = "Reach Size",
-        Desc = "The Size Of The Reach",
+        Title = "Reach X",
+        Desc = "The X Of The Reach",
         IsTooltip = true,
         IsTextbox = false,
         Width = 200,
         Step = 0.1,
-        Value = {
-            Min = 1,
-            Max = 15,
-            Default = 1,
-        },
+        Value = { Min = 1, Max = 15, Default = 1 },
         Callback = function(val)
-reachDistance = tonumber(val)
-
-
-        if reachConnection then
-            reachConnection:Disconnect()
-            reachConnection = nil
-        end
-
-        if reachEnabled then
-            reachConnection = game:GetService("RunService").RenderStepped:Connect(function()
-                local player = game.Players.LocalPlayer
-                local character = player and player.Character
-                local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-                local humanoid = character and character:FindFirstChild("Humanoid")
-
-                if not (character and rootPart and humanoid) then return end
-
-                local tps = workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS")
-                if not tps then return end
-
-                local distance = (rootPart.Position - tps.Position).Magnitude
-                if distance <= reachDistance then
-                    local preferredFoot = game.Lighting:FindFirstChild(player.Name) and game.Lighting[player.Name]:FindFirstChild("PreferredFoot")
-                    if preferredFoot then
-                        local limbName = (humanoid.RigType == Enum.HumanoidRigType.R6)
-                            and ((preferredFoot.Value == 1) and "Right Leg" or "Left Leg")
-                            or ((preferredFoot.Value == 1) and "RightLowerLeg" or "LeftLowerLeg")
-
-                        local limb = character:FindFirstChild(limbName)
-                        if limb then
-                            firetouchinterest(limb, tps, 0)
-                            firetouchinterest(limb, tps, 1)
-                        end
-                    end
-                end
-            end)
-        end
+reachX = tonumber(val)
         end
     })
+
+    R:Slider({
+        Title = "Reach Y",
+        Desc = "The Y Of The Reach",
+        IsTooltip = true,
+        IsTextbox = false,
+        Width = 200,
+        Step = 0.1,
+        Value = { Min = 1, Max = 15, Default = 1 },
+        Callback = function(val)
+reachY = tonumber(val)
+        end
+    })
+
+    R:Slider({
+        Title = "Reach Z",
+        Desc = "The Z Of The Reach",
+        IsTooltip = true,
+        IsTextbox = false,
+        Width = 200,
+        Step = 0.1,
+        Value = { Min = 1, Max = 15, Default = 1 },
+        Callback = function(val)
+reachZ = tonumber(val)
+        end
+    })
+
     R:Space()
 
           R:Section({
@@ -610,38 +611,20 @@ MS:Toggle({
 
 MS:Section({ Title = "Percentage" })
 
-MS:Toggle({
-    Flag = "EnablePercentage",
-    Title = "Enable / Disable Percentage",
-    Desc = "",
-    Default = false,
-    Callback = function(state)
-        usePercentage = state
-        if state then
-            local size = percentageValue * 0.1
-            headReachSize = getAdjustedSize(size, headReachSize.Y, size)
-            updateHeadOffset()
-            startHeadReach()
+local percentages = {10, 25, 50, 75, 100}
+for _, p in ipairs(percentages) do
+    MS:Button({
+        Title = p .. "%",
+        Callback = function()
+            local size = p * 0.1
+            headReachSize = Vector3.new(size, headReachSize.Y, size)
+            headOffset = Vector3.new(0, headReachSize.Y / 2.5, 0)
+            if headReachEnabled then
+                updateHeadBox()
+            end
         end
-    end
-})
-
-MS:Slider({
-    Title = "Percentage",
-    Desc = "",
-    Width = 200,
-    Step = 1,
-    Value = { Min = 1, Max = 100, Default = 1 },
-    Callback = function(value)
-        percentageValue = value
-        if usePercentage then
-            local size = value * 0.1
-            headReachSize = getAdjustedSize(size, headReachSize.Y, size)
-            updateHeadOffset()
-            startHeadReach()
-        end
-    end
-})
+    })
+end
 
 
 --------------------------------------------------------
@@ -656,9 +639,11 @@ local function createMossReachButton(title, percentage)
         Justify = "Center",
         Callback = function()
             local size = percentage * 0.2
-            headReachSize = getAdjustedSize(size, headReachSize.Y, size)
-            updateHeadOffset()
-            startHeadReach()
+            headReachSize = Vector3.new(size, headReachSize.Y, size)
+            headOffset = Vector3.new(0, headReachSize.Y / 2.5, 0)
+            if headReachEnabled then
+                updateHeadBox()
+            end
         end
     })
 end
@@ -680,7 +665,6 @@ end
 local player = game.Players.LocalPlayer
 local RunService = game:GetService("RunService")
 
--- Default values
 local reachEnabled = false
 local reachDistance = 10
 local reachConnection = nil
@@ -980,62 +964,6 @@ end
 
 
           RC:Section({
-        Title = [[Old Ball Collision]],
-        TextSize = 18,
-        TextTransparency = .35,
-        FontWeight = Enum.FontWeight.Medium,
-    })
-
-
-
-RC:Toggle({
-    Flag = "",
-    Title = "Enable / Disable Ball Collision",
-    Desc = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-local TPS = workspace:WaitForChild("TPSSystem"):WaitForChild("TPS")
-
--- Create the part
-local follower = Instance.new("Part")
-follower.Name = "FollowerPart"
-follower.Shape = Enum.PartType.Ball
-follower.Anchored = true
-follower.CanCollide = true
-follower.Material = Enum.Material.Air
-follower.Color = TPS.Color -- Start with same color
-follower.Parent = workspace
-
--- Sync function
-local RunService = game:GetService("RunService")
-
-RunService.Heartbeat:Connect(function()
-    if TPS then
-        -- Match size
-        follower.Size = TPS.Size
-        
-        -- Match position (and rotation)
-        follower.CFrame = TPS.CFrame
-        
-        -- Match color
-        follower.Color = TPS.Color
-    end
-end)
-
-else 
-
-    if workspace.FollowerPart then 
-        workspace.FollowerPart:Destroy()
-    end
-
-end
-
-    end
-})
-
-
-          RC:Section({
         Title = [[Reduce Ball Delay]],
         TextSize = 18,
         TextTransparency = .35,
@@ -1054,73 +982,39 @@ RC:Button({
     end
 })
 
-
-          RC:Section({
-        Title = [[Better React]],
+RC:Section({
+        Title = [[React Percentages]],
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
     })
 
-RC:Button({
-    Title = "Better React",
-    Icon = "",
-    Justify = "Center",
-    Callback = function()
+local currentReactPercent = 0
 
-					game.Workspace.TPSSystem.TPS.Velocity = Vector3.new(100, 100, 100)
+local function setReact(percent)
+    currentReactPercent = percent
+    local vel = Vector3.new(100 * (percent / 100), 100 * (percent / 100), 100 * (percent / 100))
+    game.Workspace.TPSSystem.TPS.Velocity = vel
+end
 
-    end
-})
-
-
-
-
-          RC:Section({
-        Title = [[Alz React]],
-        TextSize = 18,
-        TextTransparency = .35,
-        FontWeight = Enum.FontWeight.Medium,
+for _, p in ipairs({10, 25, 50, 75, 100}) do
+    RC:Button({
+        Title = p .. "%",
+        Callback = function()
+            setReact(p)
+        end
     })
-
-RC:Button({
-    Title = "Alz React",
-    Icon = "",
-    Justify = "Center",
-    Callback = function()
-
-    game.Workspace.TPSSystem.TPS.Velocity = Vector3.new(100, 100, 100)
-
-    end
-})
-
-          RC:Section({
-        Title = [[Foxtede React]],
-        TextSize = 18,
-        TextTransparency = .35,
-        FontWeight = Enum.FontWeight.Medium,
-    })
-
-RC:Button({
-    Title = "Foxtede React",
-    Icon = "",
-    Justify = "Center",
-    Callback = function()
-
-    game.Workspace.TPSSystem.TPS.Velocity = Vector3.new(110, 110, 110)
-
-    end
-})
+end
 
 
-          RC:Section({
+          GKRC:Section({
         Title = [[Goalkeeper React]],
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
     })
 
-RC:Button({
+GKRC:Button({
     Title = "Goalkeeper React",
     Icon = "",
     Justify = "Center",
@@ -1148,6 +1042,147 @@ RC:Button({
 
     end
 })
+
+local baseG_REACH = 4
+local baseJ_REACH = 5
+local baseAIR_X = 3.5
+local baseAIR_Y = 5
+local baseAIR_Z = 3
+local khalidG_REACH = baseG_REACH
+local khalidJ_REACH = baseJ_REACH
+local khalidAIR_X = baseAIR_X
+local khalidAIR_Y = baseAIR_Y
+local khalidAIR_Z = baseAIR_Z
+local khalidEnabled = false
+
+local function setKhalidPercent(percent)
+    local multiplier = 1 + (percent / 100)
+    khalidG_REACH = baseG_REACH * multiplier
+    khalidJ_REACH = baseJ_REACH * multiplier
+    khalidAIR_X = baseAIR_X * multiplier
+    khalidAIR_Y = baseAIR_Y * multiplier
+    khalidAIR_Z = baseAIR_Z * multiplier
+end
+
+local function buffKhalid20()
+    setKhalidPercent((khalidG_REACH / baseG_REACH - 1) * 100 + 20)
+end
+
+Khalid:Toggle({
+    Title = "Enable Khalid",
+    Callback = function(v)
+        khalidEnabled = v
+    end
+})
+
+Khalid:Slider({
+    Title = "Ground Reach",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 0.5,
+    Value = {Min = 0, Max = 20, Default = 4},
+    Callback = function(v)
+        khalidG_REACH = v
+    end
+})
+
+Khalid:Slider({
+    Title = "Jump Reach",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 0.5,
+    Value = {Min = 0, Max = 20, Default = 5},
+    Callback = function(v)
+        khalidJ_REACH = v
+    end
+})
+
+Khalid:Slider({
+    Title = "Air X",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 0.5,
+    Value = {Min = 0, Max = 20, Default = 3.5},
+    Callback = function(v)
+        khalidAIR_X = v
+    end
+})
+
+Khalid:Slider({
+    Title = "Air Y",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 0.5,
+    Value = {Min = 0, Max = 20, Default = 5},
+    Callback = function(v)
+        khalidAIR_Y = v
+    end
+})
+
+Khalid:Slider({
+    Title = "Air Z",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 0.5,
+    Value = {Min = 0, Max = 20, Default = 3},
+    Callback = function(v)
+        khalidAIR_Z = v
+    end
+})
+
+Khalid:Button({
+    Title = "Buff by 20%",
+    Callback = function()
+        buffKhalid20()
+    end
+})
+
+local percentages = {15, 25, 50, 75, 100}
+for _, p in ipairs(percentages) do
+    Khalid:Button({
+        Title = p .. "%",
+        Callback = function()
+            setKhalidPercent(p)
+        end
+    })
+end
+
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+    if khalidEnabled then
+        local char = LocalPlayer.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChild("Humanoid")
+        local ball = workspace:FindFirstChild("TPS") or (workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS"))
+
+        if root and ball and hum then
+            local rel = root.CFrame:PointToObjectSpace(ball.Position)
+            local isAir = hum.FloorMaterial == Enum.Material.Air
+
+            if isAir then
+                if (math.abs(rel.X) <= khalidAIR_X and rel.Y <= khalidAIR_Y and rel.Y >= -1.5 and math.abs(rel.Z) <= khalidAIR_Z) or (ball.Position - root.Position).Magnitude <= khalidJ_REACH then
+                    firetouchinterest(ball, root, 0)
+                    firetouchinterest(ball, root, 1)
+                    ball.AssemblyLinearVelocity = (Camera.CFrame.LookVector * 135) + Vector3.new(0, 8, 0)
+                end
+            else
+                if (ball.Position - root.Position).Magnitude <= khalidG_REACH then
+                    firetouchinterest(ball, root, 0)
+                    firetouchinterest(ball, root, 1)
+                    ball.AssemblyLinearVelocity = (Camera.CFrame.LookVector * 135) + Vector3.new(0, 8, 0)
+                end
+            end
+        end
+    end
+end)
 
           P:Section({
         Title = [[Walkspeed]],
