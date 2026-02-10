@@ -1,3 +1,4 @@
+```lua
 void black lookfor i,b in pairs(workspace.FE.Actions:GetChildren()) do
     if b.Name == " " then
     b:Destroy()
@@ -44,7 +45,6 @@ local WindUI = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"
 ))()
 
--- */  Window  /* --
 local Window = WindUI:CreateWindow({
     Title = "Cezar Hub | TPS STREET SOCCER Safe V0.01",
     Folder = "Cezar Hub",
@@ -54,7 +54,7 @@ local Window = WindUI:CreateWindow({
     HideSearchBar = false,
 
     OpenButton = {
-        Title = "Atlantic.dev",
+        Title = "Cezar Hub",
         CornerRadius = UDim.new(1, 0),
         StrokeThickness = 3,
         Enabled = true,
@@ -76,44 +76,31 @@ local Window = WindUI:CreateWindow({
 
 
 do
-    Window:Tag({
-        Title = "Join Discord For W Script" ,
-        Icon = "gamepad-2",
-        Color = Color3.fromHex("#0000FF")
-    })
-end
-
-do
     WindUI:AddTheme({
         Name = "CosmicBlue",
         
-        -- Core Colors
-        Accent = Color3.fromHex("#00FFFF"),         -- Bright Electric Blue for emphasis (links, highlights, active states)
-        Dialog = Color3.fromHex("#030A1F"),         -- Deepest Blue for dialogs/pop-ups
-        Outline = Color3.fromHex("#00FFFF"),        -- Matching accent for outlines
-        Text = Color3.fromHex("#E0E0E0"),           -- Light Gray for main text
-        Placeholder = Color3.fromHex("#A0A0A0"),    -- Neutral Gray for hints
-        Button = Color3.fromHex("#1A1A1A"),         -- Slightly lighter than ElementBackground for interactive buttons
-        Icon = Color3.fromHex("#66FFFF"),           -- Lighter Electric Blue for general icons
+        Accent = Color3.fromHex("#00FFFF"),
+        Dialog = Color3.fromHex("#030A1F"),
+        Outline = Color3.fromHex("#00FFFF"),
+        Text = Color3.fromHex("#E0E0E0"),
+        Placeholder = Color3.fromHex("#A0A0A0"),
+        Button = Color3.fromHex("#1A1A1A"),
+        Icon = Color3.fromHex("#66FFFF"),
         
-        -- Window & Main Background
-        WindowBackground = Color3.fromHex("#030A1F"), -- Very deep, dark blue for the main application background
+        WindowBackground = Color3.fromHex("#030A1F"),
         
-        -- Top Bar
         TopbarButtonIcon = Color3.fromHex("#66FFFF"),
         TopbarTitle = Color3.fromHex("#E0E0E0"),
         TopbarAuthor = Color3.fromHex("#A0A0A0"),
         TopbarIcon = Color3.fromHex("#00FFFF"),
         
-        -- Tabs
-        TabBackground = Color3.fromHex("#121212"),   -- Near-black background for the tab container
+        TabBackground = Color3.fromHex("#121212"),
         TabTitle = Color3.fromHex("#E0E0E0"),
         TabIcon = Color3.fromHex("#66FFFF"),
         
-        -- Elements (Buttons, Input Fields, Toggles)
-        ElementBackground = Color3.fromHex("#66FFFF"), -- **High Contrast Black/Dark Gray** - This makes all elements clearly visible
+        ElementBackground = Color3.fromHex("#66FFFF"),
         ElementTitle = Color3.fromHex("#E0E0E0"),
-        ElementDesc = Color3.fromHex("#AAAAAA"),      -- Muted description text
+        ElementDesc = Color3.fromHex("#AAAAAA"),
         ElementIcon = Color3.fromHex("#66FFFF"),
     })
 
@@ -137,98 +124,82 @@ local ST = Window:Section({
     local Read = ST1:Tab({
         Title = "Read",
         Icon = "info",
-        IconColor = blue,
     })
 
         local R = M:Tab({
         Title = "Reach",
         Icon = "volleyball",
-        IconColor = blue,
     })
             local MS = M:Tab({
         Title = "Mossing",
         Icon = "user",
-        IconColor = blue,
     })
 
                 local VS = M:Tab({
         Title = "Volleying",
         Icon = "footprints",
-        IconColor = blue,
     })
 
     
                 local RC = M:Tab({
         Title = "React",
         Icon = "apple",
-        IconColor = blue,
     })
 
                 local GKRC = M:Tab({
         Title = "Goalkeeper React",
         Icon = "apple",
-        IconColor = blue,
     })
 
                 local Khalid = M:Tab({
         Title = "Khalid",
         Icon = "user",
-        IconColor = blue,
     })
 
         
                 local P = MI:Tab({
         Title = "Player",
         Icon = "user-round-cog",
-        IconColor = blue,
     })
 
                     local PP = MI:Tab({
         Title = "Ping & Performance",
         Icon = "ethernet-port",
-        IconColor = blue,
     })
 
                         local H = MI:Tab({
         Title = "Helpers",
         Icon = "heart-handshake",
-        IconColor = blue,
     })
     
                         local BM = MI:Tab({
         Title = "Ball Modifications",
         Icon = "pencil-off",
-        IconColor = blue,
     })
 
                             local FG = MI:Tab({
         Title = "Gamepass",
         Icon = "banknote-x",
-        IconColor = blue,
     })
 
                                 local TL = MI:Tab({
         Title = "Teleporting",
         Icon = "bird",
-        IconColor = blue,
     })
 
                                     local SC = MI:Tab({
         Title = "Sky Changer",
         Icon = "cloud",
-        IconColor = blue,
     })
 
                                         local STT = ST:Tab({
         Title = "Settings",
         Icon = "settings",
-        IconColor = blue,
     })
 
 
     
-  ------------------------------------------------ READ TAB ----------------------------------------------
-    local InviteCode = "B6rMyJXg4m"
+local InviteCode = "B6rMyJXg4m"
             local DiscordServerParagraph = Read:Paragraph({
             Title = "Important",
             Desc = "This is the BETA version of this script, please join the Discord server to report any bugs or issues.",
@@ -245,7 +216,6 @@ local ST = Window:Section({
         
 
         
-  ------------------------------------------------ REACH TAB ----------------------------------------------
 local reachEnabled = false
 local reachX = 1
 local reachY = 1
@@ -253,7 +223,7 @@ local reachZ = 1
 local reachConnection
 
       R:Section({
-        Title = [[Reach Legs (Normal) (Firetouchinterest)]],
+        Title = "Reach Legs (Normal) (Firetouchinterest)",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -305,7 +275,6 @@ reachEnabled = Value
 
     R:Slider({
         Title = "Reach X",
-        Desc = "The X Of The Reach",
         IsTooltip = true,
         IsTextbox = false,
         Width = 200,
@@ -318,7 +287,6 @@ reachX = tonumber(val)
 
     R:Slider({
         Title = "Reach Y",
-        Desc = "The Y Of The Reach",
         IsTooltip = true,
         IsTextbox = false,
         Width = 200,
@@ -331,7 +299,6 @@ reachY = tonumber(val)
 
     R:Slider({
         Title = "Reach Z",
-        Desc = "The Z Of The Reach",
         IsTooltip = true,
         IsTextbox = false,
         Width = 200,
@@ -344,8 +311,8 @@ reachZ = tonumber(val)
 
     R:Space()
 
-          R:Section({
-        Title = [[Reach Legs (Editing Size)]],
+      R:Section({
+        Title = "Reach Legs (Editing Size)",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -355,9 +322,8 @@ reachZ = tonumber(val)
         R:Input({
         Flag = "InputTest",
         Title = "Legs Size (R6)",
-        Desc = "This reach method is supported by solara / xeno.   Minimum Size is 1 if your put 0 you cant move anumore.",
         Value = "1",
-        Type = "Textarea", -- or "Textarea"
+        Type = "Textarea",
         Placeholder = "Reach",
         Callback = function(Value) 
     game.Players.LocalPlayer.Character["Right Leg"].Size = Vector3.new(Value, 2, Value)
@@ -374,9 +340,8 @@ reachZ = tonumber(val)
         R:Input({
         Flag = "InputTest",
         Title = "Legs Size (R15)",
-        Desc = "This reach method is supported by solara / xeno.   Minimum Size is 1 if your put 0 you cant move anymore.",
         Value = "1",
-        Type = "Textarea", -- or "Textarea"
+        Type = "Textarea",
         Placeholder = "Reach",
         Callback = function(Value) 
     game.Players.LocalPlayer.Character["RightLowerLeg"].Size = Vector3.new(Value, 2, Value)
@@ -392,7 +357,6 @@ reachZ = tonumber(val)
 
 R:Button({
     Title = "Fake legs (Appear Normal)",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         local player = game.Players.LocalPlayer
@@ -400,13 +364,7 @@ R:Button({
         local humanoid = character:WaitForChild("Humanoid")
 
         if humanoid.RigType == Enum.HumanoidRigType.R6 then
-            WindUI:Notify({
-                Title = "Applied",
-                Desc = "",
-                Icon = "check",
-            })
 
-            -- Your original code, untouched
             game.Players.LocalPlayer.Character["Right Leg"].Transparency = 1
             game.Players.LocalPlayer.Character["Left Leg"].Transparency = 1
 
@@ -457,11 +415,6 @@ R:Button({
             MotorHip.Part1 = RightLegM
 
         elseif humanoid.RigType == Enum.HumanoidRigType.R15 then
-            WindUI:Notify({
-                Title = "Applied",
-                Desc = "",
-                Icon = "check",
-            })
 
             game.Players.LocalPlayer.Character["RightLowerLeg"].Transparency = 1
             game.Players.LocalPlayer.Character["LeftLowerLeg"].Transparency = 1
@@ -473,21 +426,23 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local headReachEnabled = false
-local headReachSize = Vector3.new(1, 1.5, 1)
+local headReachX = 1
+local headReachY = 1.5
+local headReachZ = 1
 local headTransparency = 0.5
-local headOffset = Vector3.new(0, 0, 0) -- offset relative to Head
+local headOffset = Vector3.new(0, 0, 0)
 local headBoxPart
 local headConnection
 
 local function updateHeadBox()
     if headBoxPart then headBoxPart:Destroy() end
     headBoxPart = Instance.new("Part")
-    headBoxPart.Size = headReachSize
+    headBoxPart.Size = Vector3.new(headReachX, headReachY, headReachZ)
     headBoxPart.Transparency = headTransparency
     headBoxPart.Anchored = true
     headBoxPart.CanCollide = false
-    headBoxPart.Color = Color3.fromRGB(255, 105, 180) -- Pink color
-    headBoxPart.Material = Enum.Material.Neon -- Neon material
+    headBoxPart.Color = Color3.fromRGB(255, 105, 180)
+    headBoxPart.Material = Enum.Material.Neon
     headBoxPart.Name = "HeadReachBox"
     headBoxPart.Parent = Workspace
 end
@@ -523,14 +478,9 @@ local function stopHeadReach()
     if headBoxPart then headBoxPart:Destroy() end
 end
 
---------------------------------------------------------
--- UI WITH MS
---------------------------------------------------------
-
 MS:Toggle({
     Flag = "EnableHeadReach",
     Title = "Enable / Disable Moss & Head Reach",
-    Desc = "",
     Default = false,
     Callback = function(state)
         headReachEnabled = state
@@ -538,34 +488,30 @@ MS:Toggle({
     end
 })
 
--- X SLIDER
 MS:Slider({
     Title = "Reach X",
-    Desc = "",
     IsTooltip = false,
     IsTextbox = false,
     Width = 200,
     Step = 1,
     Value = { Min = 0, Max = 50, Default = 1 },
     Callback = function(val)
-        headReachSize = Vector3.new(val, headReachSize.Y, headReachSize.Z)
+        headReachX = val
         if headReachEnabled then
             updateHeadBox()
         end
     end
 })
 
--- Y SLIDER (with automatic offset)
 MS:Slider({
     Title = "Reach Y",
-    Desc = "",
     IsTooltip = false,
     IsTextbox = false,
     Width = 200,
     Step = 1,
     Value = { Min = 0, Max = 50, Default = 1.5 },
     Callback = function(val)
-        headReachSize = Vector3.new(headReachSize.X, val, headReachSize.Z)
+        headReachY = val
         headOffset = Vector3.new(headOffset.X, val / 2.5, headOffset.Z)
         if headReachEnabled then
             updateHeadBox()
@@ -573,28 +519,24 @@ MS:Slider({
     end
 })
 
--- Z SLIDER
 MS:Slider({
     Title = "Reach Z",
-    Desc = "",
     IsTooltip = false,
     IsTextbox = false,
     Width = 200,
     Step = 1,
     Value = { Min = 0, Max = 50, Default = 1 },
     Callback = function(val)
-        headReachSize = Vector3.new(headReachSize.X, headReachSize.Y, val)
+        headReachZ = val
         if headReachEnabled then
             updateHeadBox()
         end
     end
 })
 
--- Appear Normal Toggle
 MS:Toggle({
     Flag = "AppearNormal",
     Title = "Appear Normal",
-    Desc = "",
     Default = false,
     Callback = function(v)
         headTransparency = v and 1 or 0.5
@@ -605,10 +547,6 @@ MS:Toggle({
 })
 
 
---------------------------------------------------------
--- SECTION: Percentage
---------------------------------------------------------
-
 MS:Section({ Title = "Percentage" })
 
 local percentages = {10, 25, 50, 75, 100}
@@ -617,8 +555,9 @@ for _, p in ipairs(percentages) do
         Title = p .. "%",
         Callback = function()
             local size = p * 0.1
-            headReachSize = Vector3.new(size, headReachSize.Y, size)
-            headOffset = Vector3.new(0, headReachSize.Y / 2.5, 0)
+            headReachX = size
+            headReachZ = size
+            headOffset = Vector3.new(0, headReachY / 2.5, 0)
             if headReachEnabled then
                 updateHeadBox()
             end
@@ -626,10 +565,6 @@ for _, p in ipairs(percentages) do
     })
 end
 
-
---------------------------------------------------------
--- SECTION: Moss Configs
---------------------------------------------------------
 
 MS:Section({ Title = "Moss Configs" })
 
@@ -639,8 +574,9 @@ local function createMossReachButton(title, percentage)
         Justify = "Center",
         Callback = function()
             local size = percentage * 0.2
-            headReachSize = Vector3.new(size, headReachSize.Y, size)
-            headOffset = Vector3.new(0, headReachSize.Y / 2.5, 0)
+            headReachX = size
+            headReachZ = size
+            headOffset = Vector3.new(0, headReachY / 2.5, 0)
             if headReachEnabled then
                 updateHeadBox()
             end
@@ -655,7 +591,7 @@ end
 
 
           VS:Section({
-        Title = [[Volley Reach]],
+        Title = "Volley Reach",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -668,10 +604,9 @@ local RunService = game:GetService("RunService")
 local reachEnabled = false
 local reachDistance = 10
 local reachConnection = nil
-local volleyPart = nil -- Will be set based on team selection
+local volleyPart = nil
 local insideVolley = false
 
--- Function to check if player is inside volley part
 local function checkInsideZone()
     if not volleyPart then return false end
     local char = player.Character
@@ -687,7 +622,6 @@ local function checkInsideZone()
            pos.Z >= min.Z and pos.Z <= max.Z
 end
 
--- Function to start reach loop
 local function startReachLoop()
     if reachConnection then
         reachConnection:Disconnect()
@@ -698,7 +632,7 @@ local function startReachLoop()
 
     reachConnection = RunService.RenderStepped:Connect(function()
         insideVolley = checkInsideZone()
-        if not insideVolley then return end -- only reach inside zone
+        if not insideVolley then return end
 
         local character = player.Character
         local rootPart = character and character:FindFirstChild("HumanoidRootPart")
@@ -730,7 +664,6 @@ local function startReachLoop()
     end)
 end
 
--- Loop to continuously update insideVolley state
 task.spawn(function()
     while true do
         task.wait(0.1)
@@ -744,10 +677,8 @@ local S = VS:Paragraph({
 })
 
 
--- ==== UI ====
 VS:Button({
     Title = "Blue Team",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         volleyPart = workspace.GKSystem:FindFirstChild("Fix1")
@@ -760,7 +691,6 @@ VS:Button({
 
 VS:Button({
     Title = "Red Team",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         volleyPart = workspace.GKSystem:FindFirstChild("Fix2")
@@ -772,9 +702,7 @@ VS:Button({
 })
 
 VS:Toggle({
-    Flag = "Enable / Disable Volley Reach",
     Title = "Enable / Disable Volley Reach",
-    Desc = "Enable or disable volley reach when in zone",
     Default = false,
     Callback = function(state)
         reachEnabled = state
@@ -784,7 +712,6 @@ VS:Toggle({
 
 VS:Slider({
     Title = "Volley Reach Size",
-    Desc = "Adjust your reach distance",
     IsTooltip = true,
     IsTextbox = false,
     Width = 200,
@@ -801,7 +728,7 @@ VS:Slider({
 
 
           VS:Section({
-        Title = [[Volleying Reacts (More Soon...)]],
+        Title = "Volleying Reacts (More Soon...)",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -812,7 +739,6 @@ local RunService = game:GetService("RunService")
 
 VS:Button({
     Title = "Volley React",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         local reachEnabled = true
@@ -820,7 +746,6 @@ VS:Button({
         local reachConnection = nil
         local insideVolley = false
 
-        -- Determine the correct volley part based on team
         local function getTeamVolleyPart()
             if player.Team then
                 if player.Team.Name == "Blue" then
@@ -838,10 +763,8 @@ VS:Button({
             return
         end
 
-        -- Optional: set size for clarity
         volleyPart.Size = Vector3.new(85, 15.479999542236328, 34.80000305175781)
 
-        -- Function to check if player is inside the zone
         local function checkInsideZone()
             local char = player.Character
             local root = char and char:FindFirstChild("HumanoidRootPart")
@@ -856,7 +779,6 @@ VS:Button({
                    pos.Z >= min.Z and pos.Z <= max.Z
         end
 
-        -- Function to start the reach loop
         local function startReachLoop()
             if reachConnection then
                 reachConnection:Disconnect()
@@ -899,10 +821,8 @@ VS:Button({
             end)
         end
 
-        -- Start the loop
         startReachLoop()
 
-        -- Optional: continuously update insideVolley (for safety)
         task.spawn(function()
             while reachEnabled do
                 task.wait(0.1)
@@ -917,36 +837,29 @@ VS:Button({
 
 
 VS:Toggle({
-    Flag = "EnableVolleyReact2",
     Title = "Enable / Disable Ball Collision",
-    Desc = "",
     Default = false,
     Callback = function(state)
         if state then
 local TPS = workspace:WaitForChild("TPSSystem"):WaitForChild("TPS")
 
--- Create the part
 local follower = Instance.new("Part")
 follower.Name = "FollowerPart"
 follower.Shape = Enum.PartType.Ball
 follower.Anchored = true
 follower.CanCollide = true
 follower.Material = Enum.Material.Air
-follower.Color = TPS.Color -- Start with same color
+follower.Color = TPS.Color
 follower.Parent = workspace
 
--- Sync function
 local RunService = game:GetService("RunService")
 
 RunService.Heartbeat:Connect(function()
     if TPS then
-        -- Match size
         follower.Size = TPS.Size
         
-        -- Match position (and rotation)
         follower.CFrame = TPS.CFrame
         
-        -- Match color
         follower.Color = TPS.Color
     end
 end)
@@ -964,7 +877,7 @@ end
 
 
           RC:Section({
-        Title = [[Reduce Ball Delay]],
+        Title = "Reduce Ball Delay",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -972,7 +885,6 @@ end
 
 RC:Button({
     Title = "Reduce Ball Delay",
-    Icon = "",
     Justify = "Center",
     Callback = function()
 
@@ -983,7 +895,7 @@ RC:Button({
 })
 
 RC:Section({
-        Title = [[React Percentages]],
+        Title = "React Percentages",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1008,7 +920,7 @@ end
 
 
           GKRC:Section({
-        Title = [[Goalkeeper React]],
+        Title = "Goalkeeper React",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1016,7 +928,6 @@ end
 
 GKRC:Button({
     Title = "Goalkeeper React",
-    Icon = "",
     Justify = "Center",
     Callback = function()
 
@@ -1185,7 +1096,7 @@ RunService.Heartbeat:Connect(function()
 end)
 
           P:Section({
-        Title = [[Walkspeed]],
+        Title = "Walkspeed",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1197,9 +1108,7 @@ local CurrentSpeed = 23
     
 
 P:Toggle({
-    Flag = "Enable / Disable Walkspeed",
     Title = "Enable / Disable Walkspeed",
-    Desc = "",
     Default = false,
     Callback = function(v)
         WalkspeedEnabled = v
@@ -1217,7 +1126,6 @@ P:Toggle({
 
 P:Slider({
         Title = "Walkspeed Size",
-        Desc = "",
         IsTooltip = true,
         IsTextbox = false,
         Width = 200,
@@ -1241,9 +1149,7 @@ P:Slider({
 
 
         P:Keybind({
-        Flag = "Reset Walkspeed back",
         Title = "Reset Walkspeed Back To Default",
-        Desc = "",
         Value = "",
         Callback = function(v)
                local character = game.Players.LocalPlayer.Character
@@ -1255,14 +1161,11 @@ P:Slider({
 
 
 P:Keybind({
-    Flag = "",
     Title = "Restore Walkspeed from Slider",
-    Desc = "",
     Value = "",
     Callback = function(v)
         local character = game.Players.LocalPlayer.Character
         if character and character:FindFirstChildOfClass("Humanoid") then
-            -- enable walkspeed and apply slider value
             WalkspeedEnabled = true
             character:FindFirstChildOfClass("Humanoid").WalkSpeed = CurrentSpeed
         end
@@ -1270,7 +1173,7 @@ P:Keybind({
 })
 
           P:Section({
-        Title = [[Jump Power]],
+        Title = "Jump Power",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1282,9 +1185,7 @@ local CurrentJump = 50
     
 
 P:Toggle({
-    Flag = "",
     Title = "Enable / Disable Jump Power",
-    Desc = "",
     Default = false,
     Callback = function(v)
         JumpEnabled = v
@@ -1302,7 +1203,6 @@ P:Toggle({
 
 P:Slider({
         Title = "Jump Power",
-        Desc = "",
         IsTooltip = true,
         IsTextbox = false,
         Width = 200,
@@ -1326,9 +1226,7 @@ P:Slider({
 
 
         P:Keybind({
-        Flag = "R",
         Title = "Reset Jump Power Back To Default",
-        Desc = "",
         Value = "",
         Callback = function(v)
            local character = game.Players.LocalPlayer.Character
@@ -1339,9 +1237,7 @@ P:Slider({
     })
 
 P:Keybind({
-    Flag = "",
     Title = "Restore Jump Power from Slider",
-    Desc = "Sets your Jump Power to the value currently selected in the slider",
     Value = "",
     Callback = function(v)
         JumpEnabled = true
@@ -1353,7 +1249,7 @@ P:Keybind({
 })
 
           P:Section({
-        Title = [[Avatar Stolen]],
+        Title = "Avatar Stolen",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1408,7 +1304,6 @@ local function DisguiseCharacter(char)
     end)
 end
 
--- Automatically reapply disguise when character respawns
 lplr.CharacterAdded:Connect(function(char)
     if Disguise.Enabled then
         DisguiseCharacter(char)
@@ -1420,11 +1315,8 @@ lplr.CharacterAdded:Connect(function(char)
     end
 end)
 
--- Toggle UI
 P:Toggle({
-    Flag = "",
     Title = "Enable / Disable Avatar Stolen",
-    Desc = "",
     Default = false,
     Callback = function(state)
         Disguise.Enabled = state
@@ -1439,11 +1331,8 @@ P:Toggle({
     end
 })
 
--- Input UI for username
 P:Input({
-    Flag = "Avatar Stolen",
     Title = "Avatar Stolen",
-    Desc = "Write user here.",
     Value = "Default value",
     InputIcon = "bird",
     Type = "Input",
@@ -1458,7 +1347,7 @@ P:Input({
 
 
           PP:Section({
-        Title = [[Clumsy]],
+        Title = "Clumsy",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1466,9 +1355,7 @@ P:Input({
 
 
     PP:Input({
-    Flag = "Clumsy",
     Title = "Clumsy",
-    Desc = "Only use numbers between 0.01 - 0.10",
     Value = "0",
     InputIcon = "",
     Type = "Input",
@@ -1481,21 +1368,19 @@ P:Input({
 
 
           PP:Section({
-        Title = [[FPS Unlocker]],
+        Title = "FPS Unlocker",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
     })
-PP:Button({ Title = "Unlock FPS", Justify = "Center", Icon = "", Callback = function() 
+PP:Button({ Title = "Unlock FPS", Justify = "Center", Callback = function() 
 setfpscap(10000) 
 end })
 PP:Button({
     Title = "Track FPS",
     Justify = "Center",
-    Icon = "",
     Callback = function()
 
-        -- UI
         local ScreenGui = Instance.new("ScreenGui")
         local Frame = Instance.new("Frame")
         local UICorner = Instance.new("UICorner")
@@ -1533,7 +1418,6 @@ PP:Button({
         TitleLabel.TextScaled = true
         TitleLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 
-        -- FPS LOGIC (REAL FPS)
         local RunService = game:GetService("RunService")
         local lastTime = tick()
         local frames = 0
@@ -1546,7 +1430,6 @@ PP:Button({
                 local fps = math.floor(frames / (now - lastTime))
                 FPSLabel.Text = tostring(fps)
 
-                -- Color logic
                 if fps >= 120 then
                     FPSLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
                 elseif fps >= 60 then
@@ -1562,7 +1445,7 @@ PP:Button({
     end
 })
 
-PP:Button({ Title = "Fake Ping 20-30", Justify = "Center", Icon = "", Callback = function() 
+PP:Button({ Title = "Fake Ping 20-30", Justify = "Center", Callback = function() 
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 local PerfStats = CoreGui:WaitForChild("RobloxGui"):WaitForChild("PerformanceStats")
@@ -1570,7 +1453,6 @@ local PerfStats = CoreGui:WaitForChild("RobloxGui"):WaitForChild("PerformanceSta
 local valueLabel
 local barFrame
 
--- Find NetworkPing PS_Button
 for _, button in ipairs(PerfStats:GetChildren()) do
     if button.Name == "PS_Button" then
         local panel = button:FindFirstChild("StatsMiniTextPanelClass")
@@ -1581,7 +1463,6 @@ for _, button in ipairs(PerfStats:GetChildren()) do
             if title and value and title.Text == "NetworkPing" then
                 valueLabel = value
 
-                -- Get PS_BarFrame
                 local graph = value.Parent.Parent:FindFirstChild("PS_AnnotatedGraph")
                 if graph then
                     barFrame = graph:FindFirstChild("PS_BarFrame")
@@ -1597,13 +1478,11 @@ if not valueLabel then
     return
 end
 
--- Fake ping state
 local fakePing = math.random(20, 25)
 local decimal = math.random(0, 99)
 local timer = 0
-local changeInterval = 0.7 -- how often ping value changes
+local changeInterval = 0.7
 
--- FORCE override every frame
 RunService.RenderStepped:Connect(function(dt)
     timer += dt
     if timer >= changeInterval then
@@ -1613,14 +1492,12 @@ RunService.RenderStepped:Connect(function(dt)
         decimal = math.random(0, 99)
     end
 
-    -- Always force text (prevents real ping coming back)
     valueLabel.Text = string.format("%d.%02d ms", fakePing, decimal)
 
-    -- Force graph bar yellow
     if barFrame then
         for _, v in ipairs(barFrame:GetDescendants()) do
             if v:IsA("Frame") then
-                v.BackgroundColor3 = Color3.fromRGB(255, 221, 0) -- yellow
+                v.BackgroundColor3 = Color3.fromRGB(255, 221, 0)
             elseif v:IsA("UIStroke") then
                 v.Color = Color3.fromRGB(255, 221, 0)
             elseif v:IsA("ImageLabel") then
@@ -1631,7 +1508,7 @@ RunService.RenderStepped:Connect(function(dt)
 end)
 
 end })
-PP:Button({ Title = "FPS Boost", Justify = "Center", Icon = "", Callback = function() 
+PP:Button({ Title = "FPS Boost", Justify = "Center", Callback = function() 
               getgenv().Kitten = 5
 local function applyOptimizations()
     local workspace = game.Workspace
@@ -1700,16 +1577,14 @@ applyOptimizations()
 end })
 
           H:Section({
-        Title = [[ZZZZ Helper]],
+        Title = "ZZZZ Helper",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
     })
 
     H:Toggle({
-    Flag = "",
     Title = "Enable / Disable ZZZZ Helper",
-    Desc = "",
     Default = false,
     Callback = function(state)
  if state then
@@ -1753,16 +1628,14 @@ end })
 })
 
          H:Section({
-        Title = [[Air Dribble Helper]],
+        Title = "Air Dribble Helper",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
     })
 
         H:Toggle({
-    Flag = "",
     Title = "Enable / Disable Air Dribble Helper",
-    Desc = "",
     Default = false,
     Callback = function(state)
 if Value then
@@ -1781,7 +1654,6 @@ if Value then
   
     H:Slider({
         Title = "Air Dribble Helper Size",
-        Desc = "The Size Of The Reach",
         IsTooltip = true,
         IsTextbox = false,
         Width = 200,
@@ -1826,7 +1698,7 @@ if Value then
 
 
              H:Section({
-        Title = [[Inf Dribble Helper]],
+        Title = "Inf Dribble Helper",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1884,9 +1756,7 @@ player.CharacterAdded:Connect(function(char)
     character = char
 end)
         H:Toggle({
-    Flag = "",
     Title = "Enable / Disable Air Dribble Helper [PC]",
-    Desc = "Toggle it by pressing (B)",
     Default = false,
     Callback = function(state)
     toggleEnabled = Value
@@ -1901,9 +1771,7 @@ end)
 })
 
         H:Toggle({
-    Flag = "",
     Title = "Enable / Disable Air Dribble Helper [MOB]",
-    Desc = "it will make a GUI in your screen to control it.",
     Default = false,
     Callback = function(Value)
 toggleEnabled = Value
@@ -1953,7 +1821,7 @@ toggleEnabled = Value
 
 
              BM:Section({
-        Title = [[Ball Modifications]],
+        Title = "Ball Modifications",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -1961,11 +1829,9 @@ toggleEnabled = Value
 
 
         BM:Input({
-        Flag = "I",
         Title = "Ball Size",
-        Desc = "",
         Value = "2.6",
-        Type = "Textarea", -- or "Textarea"
+        Type = "Textarea",
         Placeholder = "Reach",
         Callback = function(size) 
             workspace.TPSSystem.TPS.Size = Vector3.new(size, size, size)
@@ -1975,8 +1841,6 @@ toggleEnabled = Value
     BM:Button({
         Title = "Anti-Ball Fling ",
         Justify = "Center",
-        IconAlign = "Left",
-        Icon = "", -- removing icon
         Callback = function()
 
         local player = game.Players.LocalPlayer
@@ -2031,9 +1895,7 @@ end
 local connection
 
         BM:Toggle({
-    Flag = "",
     Title = "Enable / Disable Ball Prediction",
-    Desc = "",
     Default = false,
     Callback = function(state)
 
@@ -2096,36 +1958,29 @@ local connection
 
 
 BM:Toggle({
-    Flag = "",
     Title = "Enable / Disable Ball Collision",
-    Desc = "",
     Default = false,
     Callback = function(state)
         if state then
 local TPS = workspace:WaitForChild("TPSSystem"):WaitForChild("TPS")
 
--- Create the part
 local follower = Instance.new("Part")
 follower.Name = "FollowerPart"
 follower.Shape = Enum.PartType.Ball
 follower.Anchored = true
 follower.CanCollide = true
 follower.Material = Enum.Material.Air
-follower.Color = TPS.Color -- Start with same color
+follower.Color = TPS.Color
 follower.Parent = workspace
 
--- Sync function
 local RunService = game:GetService("RunService")
 
 RunService.Heartbeat:Connect(function()
     if TPS then
-        -- Match size
         follower.Size = TPS.Size
         
-        -- Match position (and rotation)
         follower.CFrame = TPS.CFrame
         
-        -- Match color
         follower.Color = TPS.Color
     end
 end)
@@ -2148,8 +2003,6 @@ end
         Values = {
             {
                 Title = "Default",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
            local ball = game.Workspace.TPSSystem.TPS
 
@@ -2165,8 +2018,6 @@ end
             },
             {
                 Title = "Addidas Brazuca",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
            local ball = game.Workspace.TPSSystem.TPS
         ball.Decal1.Texture = "http://www.roblox.com/asset/?id=137668136"
@@ -2178,8 +2029,6 @@ end
             },
             {
                 Title = "Addidas Jabulani",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
            local ball = game.Workspace.TPSSystem.TPS
         ball.Decal1.Texture = "http://www.roblox.com/asset/?id=76614961"
@@ -2200,8 +2049,6 @@ end
         Values = {
             {
                 Title = "Default",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
     local ballSound = game.Workspace.TPSSystem.TPS.Sound
 
@@ -2214,8 +2061,6 @@ end
             },
             {
                 Title = "OOF !",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
         ballSound.SoundId = "rbxassetid://5143383166"
         ballSound.PlaybackSpeed = 1
@@ -2224,8 +2069,6 @@ end
             },
             {
                 Title = "Neverloose",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
     local ballSound = game.Workspace.TPSSystem.TPS.Sound
 
@@ -2237,8 +2080,6 @@ end
             },
                       {
                 Title = "Rust",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
     local ballSound = game.Workspace.TPSSystem.TPS.Sound
 
@@ -2249,8 +2090,6 @@ end
                 end
             },          {
                 Title = "Bruh",
-                Desc = "",
-                Icon = "",
                 Callback = function() 
     local ballSound = game.Workspace.TPSSystem.TPS.Sound
 
@@ -2265,7 +2104,7 @@ end
 
 
                  FG:Section({
-        Title = [[Free Gamepasses]],
+        Title = "Free Gamepasses",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -2279,13 +2118,8 @@ local workspace = game:GetService("Workspace")
 local AnimationCurveLoop
 local AnimationTackleLoop
 
---------------------------------------------------
--- MORE CURVE
---------------------------------------------------
 FG:Toggle({
-    Flag = "MoreCurve",
     Title = "More Curve",
-    Desc = "",
     Default = false,
     Callback = function(state)
         local gui = player.PlayerGui.Start.GamePassMenu.Items.WoodenFloor
@@ -2320,13 +2154,8 @@ FG:Toggle({
     end
 })
 
---------------------------------------------------
--- BLUE FLAME
---------------------------------------------------
 FG:Toggle({
-    Flag = "BlueFlame",
     Title = "Blue Flame",
-    Desc = "",
     Default = false,
     Callback = function(state)
         if not state then return end
@@ -2346,13 +2175,8 @@ FG:Toggle({
     end
 })
 
---------------------------------------------------
--- UNLOCK COOLDOWN
---------------------------------------------------
 FG:Toggle({
-    Flag = "UnlockCooldown",
     Title = "Unlock Cooldown",
-    Desc = "",
     Default = false,
     Callback = function(state)
         if not state then return end
@@ -2369,13 +2193,8 @@ FG:Toggle({
     end
 })
 
---------------------------------------------------
--- POWERFUL TACKLE
---------------------------------------------------
 FG:Toggle({
-    Flag = "PowerfulTackle",
     Title = "Powerful Tackle",
-    Desc = "",
     Default = false,
     Callback = function(state)
         local gui = player.PlayerGui.Start.GamePassMenu.Items.RandomWeather
@@ -2409,7 +2228,7 @@ FG:Toggle({
 
 
                  TL:Section({
-        Title = [[Teleporting]],
+        Title = "Teleporting",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -2426,11 +2245,8 @@ local Target = nil
 local teleporting = false
 local connection
 
---// Loop Teleport To Ball
 TL:Toggle({
-    Flag = "LoopTeleportBall",
     Title = "Loop Teleporting to the Ball",
-    Desc = "Continuously teleports you near the ball",
     Default = false,
     Callback = function(state)
         teleporting = state
@@ -2455,7 +2271,6 @@ TL:Toggle({
     end
 })
 
---// Target Player Input
 TL:Input({
     Title = "Target Player Username",
     Icon = "user",
@@ -2465,10 +2280,8 @@ TL:Input({
     end
 })
 
---// Teleport To Player
 TL:Button({
     Title = "Teleport To Player",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         if Target
@@ -2482,10 +2295,8 @@ TL:Button({
     end
 })
 
---// Teleport Above Player
 TL:Button({
     Title = "Teleport Above Player",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         if Target
@@ -2499,10 +2310,8 @@ TL:Button({
     end
 })
 
---// Teleport Under Player
 TL:Button({
     Title = "Teleport Under Player",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         if Target
@@ -2516,10 +2325,8 @@ TL:Button({
     end
 })
 
---// Teleport To Random Player
 TL:Button({
     Title = "Teleport To Random Player",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         local others = {}
@@ -2540,10 +2347,8 @@ TL:Button({
     end
 })
 
---// Teleport To Closest Player
 TL:Button({
     Title = "Teleport To Closest Player",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         local char = player.Character
@@ -2570,10 +2375,8 @@ TL:Button({
     end
 })
 
---// Teleport To Red Goal
 TL:Button({
     Title = "Teleport To Red Goal",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         local char = player.Character or player.CharacterAdded:Wait()
@@ -2582,10 +2385,8 @@ TL:Button({
     end
 })
 
---// Teleport To Blue Goal
 TL:Button({
     Title = "Teleport To Blue Goal",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         local char = player.Character or player.CharacterAdded:Wait()
@@ -2615,7 +2416,7 @@ end
 
 
          SC:Section({
-        Title = [[Sky Changer]],
+        Title = "Sky Changer",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
@@ -2623,7 +2424,6 @@ end
 
     SC:Button({
     Title = "Night Sky",
-    Icon = "",
     Justify = "Center",
     Callback = function()
         SetSky({
@@ -2804,16 +2604,14 @@ SC:Button({
 
 
          STT:Section({
-        Title = [[Settings]],
+        Title = "Settings",
         TextSize = 18,
         TextTransparency = .35,
         FontWeight = Enum.FontWeight.Medium,
     })
 
         STT:Keybind({
-        Flag = "KeybindTest",
         Title = "Keybind",
-        Desc = "Keybind to open ui",
         Value = "End",
         Callback = function(v)
             Window:SetToggleKey(Enum.KeyCode[v])
@@ -2821,7 +2619,7 @@ SC:Button({
     })
 
     
-do -- config panel
+do
 
 
     local ConfigManager = Window.ConfigManager
@@ -2837,13 +2635,6 @@ do -- config panel
 
     STT:Space()
     
-    -- local AutoLoadToggle = STT:Toggle({
-    --     Title = "Enable Auto Load to Selected Config",
-    --     Value = false,
-    --     Callback = function(v)
-    --         Window.CurrentConfig:SetAutoLoad(v)
-    --     end
-    -- })
 
     STT:Space()
 
@@ -2852,14 +2643,12 @@ do -- config panel
 
     local AllConfigsDropdown = STT:Dropdown({
         Title = "All Configs",
-        Desc = "Select existing configs",
         Values = AllConfigs,
         Value = DefaultValue,
         Callback = function(value)
             ConfigName = value
             ConfigNameInput:Set(value)
             
-            AutoLoadToggle:Set(ConfigManager:GetConfig(ConfigName).AutoLoad or false)
         end
     })
 
@@ -2867,7 +2656,6 @@ do -- config panel
 
     STT:Button({
         Title = "Save Config",
-        Icon = "",
         Justify = "Center",
         Callback = function()
             Window.CurrentConfig = ConfigManager:Config(ConfigName)
@@ -2887,7 +2675,6 @@ do -- config panel
 
     STT:Button({
         Title = "Load Config",
-        Icon = "",
         Justify = "Center",
         Callback = function()
             Window.CurrentConfig = ConfigManager:CreateConfig(ConfigName)
@@ -2905,10 +2692,12 @@ do -- config panel
 
     STT:Button({
         Title = "Print AutoLoad Configs",
-        Icon = "",
         Justify = "Center",
         Callback = function()
             print(HttpService:JSONDecode(ConfigManager:GetAutoLoadConfigs()))
         end
     })
 end
+
+Window:Open()
+```
