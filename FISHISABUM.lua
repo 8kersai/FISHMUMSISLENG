@@ -1,1055 +1,1558 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local player = Players.LocalPlayer
+local MAIN_COLOR = Color3.fromRGB(12, 35, 64)
 
-local AC = workspace.FE.Actions:FindFirstChild("KeepYourHeadUp_")
-local p = workspace.FE.Actions
+local gui = Instance.new("ScreenGui")
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
 
-if AC then
-    AC:Destroy()
+local bg = Instance.new("Frame")
+bg.Size = UDim2.fromScale(1, 1)
+bg.BackgroundColor3 = Color3.new(0, 0, 0)
+bg.BackgroundTransparency = 1
+bg.Parent = gui
+TweenService:Create(bg, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
 
-    local r = Instance.new("RemoteEvent")
-    r.Name = "KeepYourHeadUp_"
-    r.Parent = p
+local logo = Instance.new("ImageLabel")
+logo.Size = UDim2.fromScale(0.31, 0.31)
+logo.Position = UDim2.fromScale(0.5, 0.42)
+logo.AnchorPoint = Vector2.new(0.5, 0.5)
+logo.BackgroundTransparency = 1
+logo.Image = "rbxassetid://72942035685151"
+logo.ImageTransparency = 1
+logo.Parent = bg
+TweenService:Create(logo, TweenInfo.new(0.5), {ImageTransparency = 0}):Play()
+
+local barBG = Instance.new("Frame")
+barBG.Size = UDim2.fromScale(0.26, 0.01)
+barBG.Position = UDim2.fromScale(0.5, 0.585)
+barBG.AnchorPoint = Vector2.new(0.5, 0.5)
+barBG.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+barBG.BorderSizePixel = 0
+barBG.Parent = bg
+Instance.new("UICorner", barBG).CornerRadius = UDim.new(1, 0)
+
+local barFill = Instance.new("Frame")
+barFill.Size = UDim2.fromScale(0, 1)
+barFill.BackgroundColor3 = MAIN_COLOR
+barFill.BorderSizePixel = 0
+barFill.Parent = barBG
+Instance.new("UICorner", barFill).CornerRadius = UDim.new(1, 0)
+
+local percentText = Instance.new("TextLabel")
+percentText.Size = UDim2.fromScale(1, 1)
+percentText.BackgroundTransparency = 1
+percentText.TextColor3 = Color3.new(1, 1, 1)
+percentText.TextScaled = true
+percentText.Font = Enum.Font.GothamBold
+percentText.Text = "0%"
+percentText.Parent = barBG
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.fromScale(1, 0.026)
+status.Position = UDim2.fromScale(0.5, 0.625)
+status.AnchorPoint = Vector2.new(0.5, 0.5)
+status.BackgroundTransparency = 1
+status.TextColor3 = MAIN_COLOR
+status.TextScaled = true
+status.Font = Enum.Font.GothamMedium
+status.Text = "LOADING..."
+status.Parent = bg
+
+task.spawn(function()
+local messages = {
+"LOADING...",
+"LOADING BYPASS...",
+"SUCCESSFULLY INITIALIZED",
+"ENJOY Cezar Hub."
+}
+for _, msg in ipairs(messages) do
+status.Text = msg
+task.wait(1.25)
 end
-
-
-local function a(n)
-	return string.match(n,"^[a-zA-Z]+%-%d+%a*%-%d+%a*$")~=nil
-end
-
-local function b(o)
-	for _,c in pairs(o:GetChildren()) do
-		if c:IsA("RemoteEvent") and a(c.Name) then
-			c:Destroy()
-		end
-		b(c)
-	end
-end
-
-b(game)
-
-
---//Scripts\\--
-local blueflme = false
-
-local function bflame(value)
-    local player = game:GetService("Players").LocalPlayer
-    local gui = player:WaitForChild("PlayerGui"):WaitForChild("Start").GamePassMenu.Items.BlueFlame
-    gui.Tick.Visible = value
-    gui.BlueFlame.Style = value and "RobloxRoundButton" or "RobloxRoundDefaultButton"
-    player.PlayerGui.Start.PowerShot.Image = "rbxassetid://0"
-    player:WaitForChild("Backpack"):WaitForChild("FValue").Value = value and 2 or 1
-end
-
-game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function()
-    repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer:FindFirstChild("Backpack") 
-    bflame(blueflme) 
 end)
 
---//^^^^^BlueFlame^^^^^\\--
+local startTime = tick()
+local duration = 5
+local connection
+connection = RunService.RenderStepped:Connect(function()
+local elapsed = tick() - startTime
+local progress = math.clamp(elapsed / duration, 0, 1)
+barFill.Size = UDim2.fromScale(progress, 1)
+percentText.Text = math.floor(progress * 100) .. "%"
+if progress >= 1 then
+connection:Disconnect()
+end
+end)
 
-local function FasterCooldown(value)
-    local player = game:GetService("Players").LocalPlayer
-    local gui = player.PlayerGui.Start
-    local gamePassMenu = gui.GamePassMenu.Items.Cooldown
-    local powerShot = gui.PowerShot.PowerValue
-
-    gamePassMenu.Tick.Visible = value
-    gamePassMenu.Cooldown.Style = value and "RobloxRoundButton" or "RobloxRoundDefaultButton"
-    powerShot.Value = value and 30 or 60
+local numDots = 20
+local dots = {}
+local velocities = {}
+for i = 1, numDots do
+local dot = Instance.new("Frame")
+dot.Size = UDim2.fromOffset(6, 6)
+dot.Position = UDim2.new(math.random(), 0, math.random(), 0)
+dot.BackgroundColor3 = MAIN_COLOR
+dot.BackgroundTransparency = 0.3 + math.random() * 0.4
+dot.AnchorPoint = Vector2.new(0.5, 0.5)
+dot.BorderSizePixel = 0
+Instance.new("UICorner", dot).CornerRadius = UDim.new(1, 0)
+dot.Parent = bg
+table.insert(dots, dot)
+velocities[dot] = Vector2.new((math.random()-0.5)*0.4, (math.random()-0.5)*0.4)
 end
 
---//^^^^^FasterCooldown^^^^^\\--
-
-local function MoreCurve(value)
-    local player = game:GetService("Players").LocalPlayer
-    local character = player.Character
-    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-    local backpack = player:FindFirstChild("Backpack")
-    local gui = player.PlayerGui.Start
-    local gamePassMenu = gui.GamePassMenu.Items.WoodenFloor
-
-    gamePassMenu.Tick.Visible = value
-    gamePassMenu.WoodenFloor.Style = value and "RobloxRoundButton" or "RobloxRoundDefaultButton"
-
-    if humanoid and backpack then
-        if value then
-            local AnimationCurveLoop
-            AnimationCurveLoop = humanoid.AnimationPlayed:Connect(function(AnimationTrack)
-                local trackNames = {
-                    "OldMKickL", "OldMKick", "OldLKickL", "OldLKick", "MKickL",
-                    "MKick", "LKickL", "LKick", "OldDribbleL", "OldDribble",
-                    "DribbleL", "Dribble"
-                }
-                if table.find(trackNames, AnimationTrack.Name) then
-                    local rootPart = character:FindFirstChild("HumanoidRootPart")
-                    local tps = game.Workspace:FindFirstChild("TPSSystem") and game.Workspace.TPSSystem:FindFirstChild("TPS")
-
-                    if rootPart and tps and (rootPart.Position - tps.Position).Magnitude < 9e9 then
-                        local curving = backpack:FindFirstChild("Curving")
-                        if curving then
-                            local eventName = curving.Value == 2 and "Dribble" or curving.Value == 1 and "Tackle" or nil
-                            if eventName then
-                                local event = game:GetService("Workspace").FE.Actions:FindFirstChild(eventName)
-                                if event then
-                                    task.wait(0.1)
-                                    event:FireServer(tps, rootPart)
-                                    task.wait(0.2)
-                                    event:FireServer(tps, rootPart)
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
-        end
-    end
+task.spawn(function()
+while bg.Parent do
+for _, dot in ipairs(dots) do
+local vel = velocities[dot]
+local pos = dot.Position
+local x = pos.X.Scale + vel.X * 0.03
+local y = pos.Y.Scale + vel.Y * 0.03
+if x < 0 then vel = Vector2.new(math.abs(vel.X), vel.Y); x = 0 end
+if x > 1 then vel = Vector2.new(-math.abs(vel.X), vel.Y); x = 1 end
+if y < 0 then vel = Vector2.new(vel.X, math.abs(vel.Y)); y = 0 end
+if y > 1 then vel = Vector2.new(vel.X, -math.abs(vel.Y)); y = 1 end
+velocities[dot] = vel
+dot.Position = UDim2.new(x, 0, y, 0)
 end
---//^^^^^MoreCurve^^^^^\\--
+task.wait(0.03)
+end
+end)
 
-local function GamepassController()
-    local oldIndex
-    oldIndex = hookmetamethod(game, "__index", function(self, key)
-        local targetNames = { "GamePassController", "GamePassControllerFix", "GamePassC" }
-        if table.find(targetNames, tostring(self)) then
-            if key == "Enabled" then return true end
-            if key == "Disabled" then return false end
-        end
-        return oldIndex(self, key)
-    end)
-    task.wait(0.5)
-    game.Workspace.FE.Store.Check:FireServer()
+task.delay(5, function()
+TweenService:Create(bg, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
+task.wait(0.6)
+gui:Destroy()
+task.wait(1)
+if player.Character then
+player.Character:BreakJoints()
 end
 
---//^^^^^GamepassController^^^^^\\--
-
-function Antiballfling()
-    if Config.Antiballfling then
-        local speaker = game.Players.LocalPlayer
-        local RunService = game:GetService("RunService")
-        local Clip = false
-        local function NoclipLoop()
-            if not Clip and speaker.Character then
-                for _, child in pairs(speaker.Character:GetDescendants()) do
-                    if child:IsA("BasePart") and 
-                       (child.Name == "Right Leg" or 
-                        child.Name == "Right Arm" or 
-                        child.Name == "Left Arm" or 
-                        child.Name == "Torso") then
-                        child.CanCollide = false
-                    end
-                end
-            end
-        end
-        Noclipping = RunService.Stepped:Connect(NoclipLoop)
-    else
-        if Noclipping then
-            Noclipping:Disconnect()
-            Noclipping = nil
-        end
-    end
-end
-
-
---///^^AntiBallFling^^\\--
-
-local Players = game:GetService("Players")
-local lplr = Players.LocalPlayer
+local TS = TweenService
+local UIS = UserInputService
+local CoreGui = game:GetService("CoreGui")
 local Workspace = game:GetService("Workspace")
-local Lighting = game:GetService("Lighting")
-local Disguise = {Enabled = false}
-local DisguiseUsername = {Value = ""}
-local function RemoveOldParts(character)
-   for _, child in ipairs(character:GetChildren()) do
-      if child:IsA("Accessory") or child:IsA("Clothing") or child:IsA("ShirtGraphic") then
-         child:Destroy()
-      elseif child:IsA("BodyColors") then
-         child:Destroy()
-      end
-   end
-end
-local function DisguiseCharacter(char)
-   task.spawn(function()
-      if not char then return end
-      local hum = char:WaitForChild("Humanoid", 9e9)
-      local DisguiseDescription
-      RemoveOldParts(char)
-      if DisguiseDescription == nil then
-         local success = false
-         repeat
-            success = pcall(function()
-               local userId = Players:GetUserIdFromNameAsync(DisguiseUsername.Value)
-               DisguiseDescription = Players:GetHumanoidDescriptionFromUserId(userId)
-            end)
-            if success then break end
-            task.wait(1)
-         until success or not Disguise.Enabled
-        end
-      if not Disguise.Enabled then return end
-      hum:ApplyDescriptionClientServer(DisguiseDescription)
-   end)
-end
---//^^AvatarStolen^^\\--
-
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-local function KillTeam(color)
-    if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-    LocalPlayer.CharacterAdded:Wait()
-end
-    local Character = LocalPlayer.Character
-    local RootPart = Character:WaitForChild("HumanoidRootPart")
-workspace:WaitForChild("FE"):WaitForChild("Powers"):WaitForChild("Power"):FireServer(4)
-task.wait(0.25)
-    for _, effectName in ipairs({"Fire", "PointLight"}) do
-        local effect = RootPart:FindFirstChild(effectName)
-        if effect then effect:Destroy() end
-    end
-for _, otherPlayer in ipairs(Players:GetPlayers()) do
-        if otherPlayer ~= LocalPlayer and (not color or otherPlayer.TeamColor == BrickColor.new(color)) then
-            local TargetRootPart = otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if TargetRootPart then
-                TargetRootPart.Anchored = true
-                TargetRootPart.CFrame = RootPart.CFrame
-            end
-        end
-    end
-end
-
---//^^Kill All^^\\--
-
-local bxsize = 0
-local atlasaircnt, marker
-local heathKL 
-local TargPlayer
-
-local Version = "1.5.3"
-local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
-
-local Window = WindUI:CreateWindow({
-    Title = 'Atlas.<font color="rgb(19, 122, 177)">dev</font>',
-    Icon = "star", -- Url or rbxassetid or lucide
-    Author = "Developed by Skinny", -- Author & Creator
-    Folder = "AtlasDevMobile", -- Folder name for saving data (And key)
-    Size = UDim2.fromOffset(580, 390),
-    Transparent = true, -- UI Transparency
-    Theme = "Dark", -- UI Theme
-    SideBarWidth = 200, -- UI Sidebar Width (number)
-    Background = "rbxassetid://90920013879296", -- 79007687190950
-})
-
-Window:EditOpenButton({
-    Title = "Open Example UI",
-    CornerRadius = UDim.new(0,10),
-    StrokeThickness = 2,
-    Color = ColorSequence.new( -- gradient
-        Color3.fromHex("FF0F7B"), 
-        Color3.fromHex("F89B29")
-    ),
-    Enabled = false
-})
-
-local Tabs =  {
-    Infos = Window:Tab({Title = "Social Media",Icon = "youtube", Desc = "Informations about script & Update Logs" }),
-    a = Window:Divider(),
-    Reach = Window:Tab({Title = "Reach",Icon = "ruler", Desc = "Allows you to have a greater reach over the ball, if you are far from it you can still touch it" }),
-    OReach = Window:Tab({Title = "Others Part Reach",Icon = "pencil-ruler", Desc = "Even from the reach, but for other parts of the body" }),
-    Reacts = Window:Tab({Title = "Reacts",Icon = "swords", Desc = "It takes away your delay when touching the ball, practically" }),
-    Gamepass = Window:Tab({Title = "Gamepasses",Icon = "wallet", Desc = "Gives you A lot of gamepasses for free" }),
-    Helpers = Window:Tab({Title = "Skills Helpers",Icon = "message-circle-question", Desc = "Functions that help you to make skills and tricks easy" }),
-    Misc = Window:Tab({Title = "Miscellaneous",Icon = "list-collapse", Desc = "Variations of other functions that many do not use" }),
-    Game = Window:Tab({Title = "Game Changes",Icon = "palette", Desc = "Things to modify the game and change its current aesthetics" }),
-    Troll = Window:Tab({Title = "Troll Functions",Icon = "drama", Desc = "Features that allow you to destroy a server or at least have fun" }),
-    Skyes = Window:Tab({Title = "Skyes",Icon = "cloud-snow", Desc = "Allows you to change the game's sky to make it more pleasant to look at" }),
-    b = Window:Divider(),
-    Configs = Window:Tab({Title = "UI Configs",Icon = "settings", Desc = "Basically UI Visual Changes" })
-
-}
-Window:SelectTab(1)
---//////Social Media 
-Tabs.Infos:Section({ Title = "Discord Info",TextXAlignment = "Left",TextSize = 17})
-
-Tabs.Infos:Paragraph({
-    Title = "Atlas.dev Discord",
-    Desc = 'Join Atlas.<font color="rgb(0, 16, 194)">dev</font> discord for stay informed',
-    Image = "rbxassetid://107220332374464", -- lucide or URL or rbxassetid://
-    ImageSize = 50,
-    Buttons = {
-        {
-            Title = "Copy discord link",
-            Callback = function() 
-                setclipboard("https://discord.gg/UPWPdPNHbd")
-            end
-        }
-    } 
-}) 
-
-Tabs.Infos:Section({ Title = "Changelogs",TextXAlignment = "Left",TextSize = 17})
-
-Tabs.Infos:Paragraph({Title = "30/02/2025",Desc = "- Fixed Reach\n- Fixed Lag(Constantly)\n- Fixed Bugs in Reach\n- New User Interface\n- Added New Functions"})
---////////Reach
-Tabs.Reach:Section({ Title = "Reach",TextXAlignment = "Left",TextSize = 20})
-Tabs.Reach:Paragraph({Title = "Alert about Reach",Desc = "Be careful with the number of studs you use, the higher the number the higher the chance of you being banned by an individual report. I recommend using between 2-6"})
-
-getgenv().TPSReach = false
-getgenv().ReachStuds = 0
-
-function legreach()
-	if getgenv().TPSReach then
-		if Runstepped2 then Runstepped2:Disconnect() end 
-		Runstepped2 = game:GetService("RunService").RenderStepped:Connect(function()
-			local player = game.Players.LocalPlayer
-			local char = player.Character
-			if not char then 
-                return 
-            end
-			local humanoid = char:FindFirstChild("Humanoid")
-			local rootPart = char:FindFirstChild("HumanoidRootPart")
-			local TpsS = game.Workspace.TPSSystem:FindFirstChild("TPS") 
-			local prefoot = game.Lighting[player.Name]:FindFirstChild("PreferredFoot")
-
-			if humanoid and rootPart and TpsS and prefoot then
-				if (rootPart.Position - TpsS.Position).Magnitude <= getgenv().ReachStuds then
-					local foot = nil
-					if humanoid.RigType == Enum.HumanoidRigType.R6 then
-						foot = (prefoot.Value == 1) and "Right Leg" or "Left Leg"
-					elseif humanoid.RigType == Enum.HumanoidRigType.R15 then
-						foot = (prefoot.Value == 1) and "RightLowerLeg" or "LeftLowerLeg"
-					end
-					
-					if foot and char:FindFirstChild(foot) then
-						firetouchinterest(char[foot], TpsS, 0)
-						firetouchinterest(char[foot], TpsS, 1)
-					end
-				end
-			end
-		end)
-	end
-end
-
-Tabs.Reach:Toggle({
-    Title = "Enable Reach",
-    Default = false,
-    Icon = "check",
-    Callback = function(value) 
-		getgenv().TPSReach = value
-		if value then
-			legreach()
-		else
-			if Runstepped2 then 
-                Runstepped2:Disconnect() 
-            end
-		end
-    end
-})
-
-Tabs.Reach:Slider({
-    Title = "Reach Studs",
-    Desc = "Read the warning before use",
-    Value = {
-        Min = 0,
-        Max = 25,
-        Default = getgenv().ReachStuds,
-    },
-    Callback = function(value) 
-        getgenv().ReachStuds = value 
-    end
-})
-
-----//////body part rech
-Tabs.OReach:Section({ Title = "Another Parts Reach",TextXAlignment = "Left",TextSize = 20})
-Tabs.OReach:Paragraph({Title = "Alert about Other Part Rrach",Desc = "Use low values â€‹â€‹mainly with the torso and head, if you use high values â€‹â€‹it can be totally blatant"})
-
-local player = game:GetService("Players").LocalPlayer
-
-local ReachSets = {
-    leg = {enabled = false, distance = 1, parts = {"LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "RightUpperLeg", "RightLowerLeg", "RightFoot"}},
-    arm = {enabled = false, distance = 1, parts = {"LeftUpperArm", "LeftLowerArm", "LeftHand", "RightUpperArm", "RightLowerArm", "RightHand"}},
-    head = {enabled = false, distance = 1, parts = {"Head"}},
-    chest = {enabled = false, distance = 1, parts = {"UpperTorso", "LowerTorso"}}
-}
-
-local BdPart = {}
-local ball
-
-local function frstltt(str)
-    return str:sub(1,1):upper() .. str:sub(2)
-end
-
-local function setupdChtr()
-    if not player.Character or not player.Character.Parent then
-        player.CharacterAdded:Wait()
-    end
-    local char = player.Character
-    for category, config in pairs(ReachSets) do
-        BdPart[category] = {} 
-        for _, partName in ipairs(config.parts) do
-            local part = char:FindFirstChild(partName)
-            if part then
-                table.insert(BdPart[category], part)
-            else
-                warn("Error part:", partName)
-            end
-        end
-    end
-    ball = workspace:WaitForChild("TPSSystem"):WaitForChild("TPS")
-end
-
-local function checkReach(category)
-    while ReachSets[category].enabled do
-        task.wait()
-        if ball then
-            for _, part in ipairs(BdPart[category]) do
-                local distance = (ball.Position - part.Position).Magnitude
-                if distance <= ReachSets[category].distance then
-                    firetouchinterest(part, ball, 0)
-                    firetouchinterest(part, ball, 1)
-                end
-            end
-        end
-    end
-end
-
-setupdChtr()
-player.CharacterAdded:Connect(setupdChtr)
-
-for category, config in pairs(ReachSets) do
-local cattegoryy = frstltt(category)
-
---// Configs \--
-Tabs.OReach:Section({ Title = cattegoryy .. " Reach", TextXAlignment = "Left", TextSize = 20 })
-
-Tabs.OReach:Toggle({
-    Title = "Enable " .. cattegoryy .. " Reach",
-    Default = false,
-    Icon = "check",
-    Callback = function(value) 
-    config.enabled = value
-        if value then
-            task.spawn(checkReach, category)
-        end
-    end
-})
-
-Tabs.OReach:Slider({
-    Title = cattegoryy .. " Reach Studs",
-    Desc = "Read the warning before use",
-    Value = {
-        Min = 0,
-        Max = 25,
-        Default = config.distance,
-    },
-    Callback = function(value) 
-            config.distance = tonumber(value) or config.distance
-        end
-    })
-end
-
----/////Reacts
-Tabs.Reacts:Section({ Title = "Reacts",TextXAlignment = "Left",TextSize = 20})
-Tabs.Reacts:Paragraph({Title = "Information About Reacts",Desc = "Basically it gives you an extra react, depending on your ping. This may not make a difference, I recommend using it if you have 100-150 ping"})
-
---//Script\\--
-local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
-local workspaceTPS = workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS")
-local _G = _G or {}
-local function hookMeta(targetName, paramIndex, replaceValue)
-    local old
-    old = hookmetamethod(game, "__namecall", function(self, ...)
-        local args = {...}
-        if getnamecallmethod() == "FireServer" and tostring(self) == targetName then
-            args[paramIndex] = replaceValue
-            return old(self, unpack(args))
+
+local execCount = 1
+if isfile and isfile("NEXUS.txt") then
+local n = tonumber(readfile("NEXUS.txt"))
+if n then execCount = n + 1 end
+end
+if writefile then
+writefile("NYX.txt", tostring(execCount))
+end
+
+local executorName = identifyexecutor and identifyexecutor() or "Unknown"
+local lowerName = string.lower(executorName)
+local isSolara = string.find(lowerName, "solara") ~= nil
+local isXeno = string.find(lowerName, "xeno") ~= nil
+local isSupportedExecutor = isSolara or isXeno
+
+local isTPSLike = false
+local isRealTPS = false
+local success, productInfo = pcall(function()
+return MarketplaceService:GetProductInfo(game.PlaceId)
+end)
+if success and productInfo and productInfo.Name then
+local nameUpper = string.upper(productInfo.Name)
+if string.find(nameUpper, "TPS") or string.find(nameUpper, "67") or string.find(nameUpper, "UWU") or string.find(nameUpper, "CRINGE") then
+isTPSLike = true
+end
+if string.sub(nameUpper, 1, 3) == "TPS" then
+isRealTPS = true
+end
+end
+
+local UI = Instance.new("ScreenGui")
+UI.Name = "CezarHub"
+UI.ResetOnSpawn = false
+UI.Parent = CoreGui
+
+local isMobile = UIS.TouchEnabled and not UIS.MouseEnabled
+local scale = isMobile and 0.9 or 1
+local mainSize = UDim2.new(0, 640 * scale, 0, 470 * scale)
+
+local FloatButton = Instance.new("TextButton")
+FloatButton.Size = UDim2.new(0, 60, 0, 60)
+FloatButton.AnchorPoint = Vector2.new(1, 0)
+FloatButton.Position = UDim2.new(1, -10, 0, 10)
+FloatButton.BackgroundColor3 = Color3.new(0, 0, 0)
+FloatButton.Text = "Cezar"
+FloatButton.TextColor3 = Color3.new(1, 1, 1)
+FloatButton.Font = Enum.Font.GothamBlack
+FloatButton.TextSize = 20
+FloatButton.Visible = false
+FloatButton.ZIndex = 999
+FloatButton.Parent = UI
+Instance.new("UICorner", FloatButton).CornerRadius = UDim.new(1, 0)
+local fbStroke = Instance.new("UIStroke", FloatButton)
+fbStroke.Color = MAIN_COLOR
+fbStroke.Thickness = 2.5
+fbStroke.Transparency = 0.5
+
+local Main = Instance.new("Frame")
+Main.Size = mainSize
+Main.Position = UDim2.new(0.5, -mainSize.X.Offset/2, 0.5, -mainSize.Y.Offset/2)
+Main.BackgroundColor3 = Color3.new(0,0,0)
+Main.BackgroundTransparency = 0.15
+Main.ClipsDescendants = true
+Main.Parent = UI
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0,16)
+local mainStroke = Instance.new("UIStroke", Main)
+mainStroke.Color = MAIN_COLOR
+mainStroke.Thickness = 1.5
+mainStroke.Transparency = 0.7
+
+local Title = Instance.new("TextLabel")
+Title.AutomaticSize = Enum.AutomaticSize.X
+Title.Size = UDim2.new(0,0,0,40)
+Title.Position = UDim2.new(0.5, 0, 0, 4)
+Title.AnchorPoint = Vector2.new(0.5, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Cezar Hub"
+Title.TextColor3 = MAIN_COLOR
+Title.Font = Enum.Font.GothamBlack
+Title.TextSize = 20
+Title.TextXAlignment = Enum.TextXAlignment.Center
+Title.Parent = Main
+
+local TitleStroke = Instance.new("UIStroke", Title)
+TitleStroke.Color = Color3.fromRGB(40,40,40)
+TitleStroke.Thickness = 1.2
+TitleStroke.Transparency = 0.5
+
+Title.MouseEnter:Connect(function()
+TS:Create(TitleStroke, TweenInfo.new(0.25), {Transparency = 0}):Play()
+TS:Create(Title, TweenInfo.new(0.25), {TextSize = 22}):Play()
+end)
+Title.MouseLeave:Connect(function()
+TS:Create(TitleStroke, TweenInfo.new(0.25), {Transparency = 0.5}):Play()
+TS:Create(Title, TweenInfo.new(0.25), {TextSize = 20}):Play()
+end)
+
+local TopLeftLogo = Instance.new("ImageLabel")
+TopLeftLogo.Size = UDim2.new(0, 42, 0, 42)
+TopLeftLogo.Position = UDim2.new(0, 12, 0, 6)
+TopLeftLogo.BackgroundTransparency = 1
+TopLeftLogo.Image = "rbxassetid://126523640461668"
+TopLeftLogo.ImageColor3 = Color3.new(1, 1, 1)
+TopLeftLogo.ScaleType = Enum.ScaleType.Fit
+TopLeftLogo.Parent = Main
+
+TopLeftLogo.MouseEnter:Connect(function()
+TS:Create(TopLeftLogo, TweenInfo.new(0.2), {Size = UDim2.new(0, 46, 0, 46)}):Play()
+end)
+TopLeftLogo.MouseLeave:Connect(function()
+TS:Create(TopLeftLogo, TweenInfo.new(0.2), {Size = UDim2.new(0, 42, 0, 42)}):Play()
+end)
+
+local Minimize = Instance.new("TextButton")
+Minimize.Size = UDim2.new(0,32,0,32)
+Minimize.Position = UDim2.new(1,-70,0,8)
+Minimize.BackgroundTransparency = 1
+Minimize.Text = "-"
+Minimize.TextColor3 = Color3.fromRGB(200,200,200)
+Minimize.Font = Enum.Font.GothamBold
+Minimize.TextSize = 26
+Minimize.Parent = Main
+
+local Close = Instance.new("TextButton")
+Close.Size = UDim2.new(0,32,0,32)
+Close.Position = UDim2.new(1,-36,0,8)
+Close.BackgroundTransparency = 1
+Close.Text = "X"
+Close.TextColor3 = MAIN_COLOR
+Close.Font = Enum.Font.GothamBold
+Close.TextSize = 19
+Close.Parent = Main
+
+local Status = Instance.new("Frame")
+Status.Size = UDim2.new(0,120,0,20)
+Status.Position = UDim2.new(0,14,1,-34)
+Status.BackgroundTransparency = 1
+Status.ZIndex = 10
+Status.Parent = Main
+
+local Dot = Instance.new("Frame")
+Dot.Size = UDim2.new(0,8,0,8)
+Dot.Position = UDim2.new(0,0,0.5,-4)
+Dot.BackgroundColor3 = Color3.fromRGB(255,0,0)
+Dot.ZIndex = 10
+Dot.Parent = Status
+Instance.new("UICorner", Dot).CornerRadius = UDim.new(1,0)
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(1,-12,1,0)
+StatusLabel.Position = UDim2.new(0,12,0,0)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "NOT CONNECTED"
+StatusLabel.TextColor3 = Color3.fromRGB(255,0,0)
+StatusLabel.Font = Enum.Font.GothamBold
+StatusLabel.TextSize = 10
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+StatusLabel.ZIndex = 10
+StatusLabel.Parent = Status
+
+local dragging = false
+local dragStart, startPos
+
+local TopBarArea = Instance.new("Frame")
+TopBarArea.Size = UDim2.new(1, 0, 0, 48)
+TopBarArea.BackgroundTransparency = 1
+TopBarArea.ZIndex = 10
+TopBarArea.Parent = Main
+
+TopBarArea.InputBegan:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+dragging = true
+dragStart = input.Position
+startPos = Main.Position
+local moveConn
+moveConn = UIS.InputChanged:Connect(function(inp)
+if inp.UserInputType == Enum.UserInputType.MouseMovement or inp.UserInputType == Enum.UserInputType.Touch then
+local delta = inp.Position - dragStart
+Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+end)
+input.Changed:Connect(function()
+if input.UserInputState == Enum.UserInputState.End then
+dragging = false
+moveConn:Disconnect()
+end
+end)
+end
+end)
+
+local minimized = false
+local function SetMinimized(state)
+minimized = state
+Minimize.Text = state and "+" or "-"
+if state then
+TS:Create(Main, TweenInfo.new(0.35, Enum.EasingStyle.Quart), {Size = UDim2.new(0,0,0,0)}):Play()
+task.delay(0.36, function() Main.Visible = false end)
+FloatButton.Visible = true
+else
+Main.Visible = true
+FloatButton.Visible = false
+TS:Create(Main, TweenInfo.new(0.35, Enum.EasingStyle.Quart), {Size = mainSize}):Play()
+end
+end
+
+Minimize.MouseButton1Click:Connect(function() SetMinimized(not minimized) end)
+FloatButton.MouseButton1Click:Connect(function() SetMinimized(false) end)
+Close.MouseButton1Click:Connect(function() UI:Destroy() end)
+
+UIS.InputBegan:Connect(function(i)
+if i.KeyCode == Enum.KeyCode.RightShift then
+SetMinimized(not minimized)
+end
+end)
+
+local Body = Instance.new("Frame")
+Body.Size = UDim2.new(1,0,1,-48)
+Body.Position = UDim2.new(0,0,0,48)
+Body.BackgroundTransparency = 1
+Body.Parent = Main
+
+local Sidebar = Instance.new("Frame")
+Sidebar.Size = UDim2.new(0,120,1,0)
+Sidebar.BackgroundColor3 = Color3.new(0,0,0)
+Sidebar.BackgroundTransparency = 0.92
+Sidebar.Parent = Body
+
+local blur = Instance.new("BlurEffect")
+blur.Size = 8
+blur.Parent = Sidebar
+
+local leftShadow = Instance.new("Frame")
+leftShadow.Size = UDim2.new(0,2,1,0)
+leftShadow.BackgroundColor3 = Color3.new(0,0,0)
+leftShadow.BackgroundTransparency = 0.6
+leftShadow.BorderSizePixel = 0
+leftShadow.Parent = Sidebar
+
+local Content = Instance.new("ScrollingFrame")
+Content.Size = UDim2.new(1,-120,1,0)
+Content.Position = UDim2.new(0,120,0,0)
+Content.BackgroundTransparency = 1
+Content.ScrollBarThickness = 0
+Content.AutomaticCanvasSize = Enum.AutomaticSize.Y
+Content.Parent = Body
+
+local TabButtons = {}
+local TabContainers = {}
+local CurrentContainer = nil
+
+local function AddTab(name)
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(1,-14,0,34)
+btn.Position = UDim2.new(0,7,0,#TabButtons * 40 + 12)
+btn.BackgroundTransparency = 1
+btn.Text = name
+btn.TextColor3 = Color3.fromRGB(200,200,220)
+btn.Font = Enum.Font.GothamSemibold
+btn.TextSize = 13
+btn.Parent = Sidebar
+local stroke = Instance.new("UIStroke", btn)
+stroke.Color = Color3.fromRGB(40,40,40)
+stroke.Thickness = 1
+stroke.Transparency = 0.5
+
+table.insert(TabButtons, btn)
+
+local cont = Instance.new("Frame")
+cont.Size = UDim2.new(1,0,0,100)
+cont.BackgroundTransparency = 1
+cont.Visible = false
+cont.Parent = Content
+
+local layout = Instance.new("UIListLayout", cont)
+layout.Padding = UDim.new(0,9)
+layout.FillDirection = Enum.FillDirection.Vertical
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+table.insert(TabContainers, cont)
+
+btn.MouseEnter:Connect(function()
+    if CurrentContainer == cont then return end
+    TS:Create(stroke, TweenInfo.new(0.2), {Transparency = 0}):Play()
+    TS:Create(btn, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(230,230,240), Position = UDim2.new(0,10,btn.Position.Y.Scale,btn.Position.Y.Offset)}):Play()
+end)
+
+btn.MouseLeave:Connect(function()
+    if CurrentContainer == cont then return end
+    TS:Create(stroke, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
+    TS:Create(btn, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(200,200,220), Position = UDim2.new(0,7,btn.Position.Y.Scale,btn.Position.Y.Offset)}):Play()
+end)
+
+btn.MouseButton1Click:Connect(function()
+    if CurrentContainer then CurrentContainer.Visible = false end
+    for _,b in TabButtons do
+        b.TextColor3 = Color3.fromRGB(200,200,220)
+        local s = b:FindFirstChildOfClass("UIStroke")
+        if s then s.Transparency = 0.5 end
+    end
+    cont.Visible = true
+    CurrentContainer = cont
+end)
+
+return cont
+end
+
+local HomeTab = AddTab("Home")
+local SolaraLegTab = nil
+local LegTab = nil
+local ArmTab = nil
+local BallTab = nil
+local HeadReachTab = nil
+local ReactTab = nil
+local PlayerTab = nil
+local HeadTab = nil
+
+if isTPSLike and isSupportedExecutor then
+SolaraLegTab = AddTab("R6 Leg Reach")
+HeadReachTab = AddTab("Head Reach")
+ReactTab = AddTab("React")
+PlayerTab = AddTab("Player")
+else
+LegTab = AddTab("Leg Reach")
+ArmTab = AddTab("Arm Reach")
+if isTPSLike then BallTab = AddTab("Ball Reach") end
+HeadTab = AddTab("Head Reach")
+if isTPSLike then ReactTab = AddTab("React") end
+PlayerTab = AddTab("Player")
+end
+
+local KhalidTab = AddTab("Khalid")
+local GoalkeeperReactTab = AddTab("Goalkeeper React")
+local ReactPercentTab = AddTab("React Percentages")
+local ReachTab = AddTab("Reach XYZ")
+
+TabButtons[1].TextColor3 = Color3.fromRGB(200,200,220)
+if TabButtons[1]:FindFirstChildOfClass("UIStroke") then
+TabButtons[1]:FindFirstChildOfClass("UIStroke").Transparency = 0.5
+end
+TabContainers[1].Visible = true
+CurrentContainer = TabContainers[1]
+
+for i, btn in ipairs(TabButtons) do
+btn.Position = UDim2.new(0,7,0,(i-1) * 40 + 12)
+end
+
+local Avatar = Instance.new("ImageLabel")
+Avatar.Size = UDim2.new(0,50,0,50)
+Avatar.Position = UDim2.new(0,16,0,16)
+Avatar.BackgroundTransparency = 1
+Avatar.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+Avatar.Parent = HomeTab
+Instance.new("UICorner", Avatar).CornerRadius = UDim.new(1,0)
+
+local Welcome = Instance.new("TextLabel")
+Welcome.Text = "Welcome, " .. player.DisplayName .. "!"
+Welcome.Size = UDim2.new(0,300,0,30)
+Welcome.Position = UDim2.new(0,80,0,26)
+Welcome.BackgroundTransparency = 1
+Welcome.TextColor3 = Color3.new(1,1,1)
+Welcome.Font = Enum.Font.GothamBold
+Welcome.TextSize = 17
+Welcome.TextXAlignment = Enum.TextXAlignment.Left
+Welcome.Parent = HomeTab
+
+local function HL(txt)
+local l = Instance.new("TextLabel")
+l.Size = UDim2.new(1,-40,0,22)
+l.BackgroundTransparency = 1
+l.Text = txt
+l.TextColor3 = Color3.new(1,1,1)
+l.Font = Enum.Font.Gotham
+l.TextSize = 15
+l.TextXAlignment = Enum.TextXAlignment.Left
+l.Parent = HomeTab
+return l
+end
+
+HL("Executor: " .. executorName)
+HL("Access: PREMIUM")
+HL("Executed: " .. execCount .. " time(s)")
+HL("Players: " .. #Players:GetPlayers())
+HL("Status: UNDETECTED")
+local gameStatusLabel = HL("Game: Detecting...")
+gameStatusLabel.Text = isTPSLike and "Game: TPS Detected" or "Game: Non-TPS"
+
+local function CreateToggle(parent, text, callback)
+local f = Instance.new("Frame")
+f.Size = UDim2.new(1,-20,0,32)
+f.BackgroundColor3 = Color3.fromRGB(18,18,18)
+f.BackgroundTransparency = 0.2
+f.Parent = parent
+Instance.new("UICorner", f).CornerRadius = UDim.new(0,8)
+
+local l = Instance.new("TextLabel")
+l.Text = text
+l.Size = UDim2.new(1,-70,1,0)
+l.Position = UDim2.new(0,12,0,0)
+l.BackgroundTransparency = 1
+l.TextColor3 = Color3.new(1,1,1)
+l.Font = Enum.Font.GothamSemibold
+l.TextSize = 14
+l.TextXAlignment = Enum.TextXAlignment.Left
+l.Parent = f
+
+local t = Instance.new("Frame")
+t.Size = UDim2.new(0,44,0,22)
+t.Position = UDim2.new(1,-56,0.5,-11)
+t.BackgroundColor3 = Color3.fromRGB(50,50,50)
+t.Parent = f
+Instance.new("UICorner", t).CornerRadius = UDim.new(0,11)
+
+local c = Instance.new("Frame")
+c.Size = UDim2.new(0,18,0,18)
+c.Position = UDim2.new(0,2,0.5,-9)
+c.BackgroundColor3 = Color3.new(1,1,1)
+c.Parent = t
+Instance.new("UICorner", c).CornerRadius = UDim.new(1,0)
+
+local on = false
+f.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        on = not on
+        TS:Create(t, TweenInfo.new(0.2), {BackgroundColor3 = on and MAIN_COLOR or Color3.fromRGB(50,50,50)}):Play()
+        TS:Create(c, TweenInfo.new(0.2), {Position = on and UDim2.new(1,-20,0.5,-9) or UDim2.new(0,2,0.5,-9)}):Play()
+        callback(on)
+    end
+end)
+return f
+end
+
+local function CreateSlider(parent, text, min, max, def, step, callback)
+local f = Instance.new("Frame")
+f.Size = UDim2.new(1,-20,0,52)
+f.BackgroundColor3 = Color3.fromRGB(18,18,18)
+f.BackgroundTransparency = 0.2
+f.Parent = parent
+Instance.new("UICorner", f).CornerRadius = UDim.new(0,8)
+
+local l = Instance.new("TextLabel")
+l.Text = text .. ": " .. string.format("%.1f", def)
+l.Size = UDim2.new(1,0,0,22)
+l.Position = UDim2.new(0,12,0,4)
+l.BackgroundTransparency = 1
+l.TextColor3 = Color3.new(1,1,1)
+l.Font = Enum.Font.GothamSemibold
+l.TextSize = 14
+l.TextXAlignment = Enum.TextXAlignment.Left
+l.Parent = f
+
+local s = Instance.new("Frame")
+s.Size = UDim2.new(1,-24,0,6)
+s.Position = UDim2.new(0,12,0,32)
+s.BackgroundColor3 = Color3.fromRGB(40,40,40)
+s.Parent = f
+Instance.new("UICorner", s).CornerRadius = UDim.new(0,3)
+
+local fill = Instance.new("Frame")
+fill.Size = UDim2.new((def-min)/(max-min),0,1,0)
+fill.BackgroundColor3 = MAIN_COLOR
+fill.Parent = s
+Instance.new("UICorner", fill).CornerRadius = UDim.new(0,3)
+
+local knob = Instance.new("Frame")
+knob.Size = UDim2.new(0,16,0,16)
+knob.Position = UDim2.new((def-min)/(max-min), -8, 0.5, -8)
+knob.BackgroundColor3 = Color3.new(1,1,1)
+knob.Parent = s
+Instance.new("UICorner", knob).CornerRadius = UDim.new(1,0)
+
+local dragging = false
+s.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local rel = math.clamp((i.Position.X - s.AbsolutePosition.X) / s.AbsoluteSize.X, 0, 1)
+        local val = min + rel * (max - min)
+        val = math.floor(val / step + 0.5) * step
+        fill.Size = UDim2.new(rel,0,1,0)
+        knob.Position = UDim2.new(rel, -8, 0.5, -8)
+        l.Text = text .. ": " .. string.format("%.1f", val)
+        callback(val)
+    end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+end
+
+local function CreateKeybindButton(parent, currentKey, labelText, onChange)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(1, -20, 0, 32)
+frame.BackgroundTransparency = 0.4
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Parent = parent
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
+
+local btn = Instance.new("TextButton")
+btn.Size = UDim2.new(1, -10, 1, -10)
+btn.Position = UDim2.new(0, 5, 0, 5)
+btn.BackgroundTransparency = 0.6
+btn.Text = labelText .. " (Current: " .. currentKey.Name .. ")"
+btn.TextColor3 = Color3.new(0.9, 0.9, 0.9)
+btn.Font = Enum.Font.GothamSemibold
+btn.TextSize = 13
+btn.TextWrapped = true
+btn.Parent = frame
+Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+
+local isBinding = false
+btn.MouseButton1Click:Connect(function()
+    if isBinding then return end
+    isBinding = true
+    btn.Text = "Press any key..."
+    local conn
+    conn = UIS.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            onChange(input.KeyCode)
+            btn.Text = labelText .. " (Current: " .. input.KeyCode.Name .. ")"
+            isBinding = false
+            conn:Disconnect()
         end
-        return old(self, ...)
     end)
-end
---Configs--
-Tabs.Reacts:Section({ Title = "ðŸ›¡ï¸Goalkeeper ReactsðŸ›¡ï¸",TextXAlignment = "Left",TextSize = 17})
-Tabs.Reacts:Button({
-    Title = "Save React",
-    Desc = "Give you Best react for saving 90% shots",
-    Callback = function() 
-        _G.Vector = Vector3.new(math.huge, math.huge, math.huge)
-        hookMeta("KickGoalKeeper", 6, _G.Vector)
-    end
-})
-
-Tabs.Reacts:Button({
-    Title = "Kick React",
-    Desc = "Give you Best react for kick ball from gk area",
-    Callback = function() 
-        _G.Vector = Vector3.new(math.huge, math.huge, math.huge)
-        hookMeta("Kick", 6, _G.Vector)
-    end
-})
-
-Tabs.Reacts:Slider({
-    Title = "Save Force",
-    Desc = "Combines with save react",
-    Value = { 
-        Min = 800, 
-        Max = 1500, 
-        Default = 920
-    },
-    Callback = function(value)
-        if workspaceTPS then
-            workspaceTPS.Force.Force = Vector3.new(value, value, value)
-        end
-    end
-})
-
-Tabs.Reacts:Section({ Title = "ðŸ¹Field ReactsðŸ¹",TextXAlignment = "Left",TextSize = 17})
-
-Tabs.Reacts:Button({
-    Title = "Shot React",
-    Desc = "Make your kick a little faster and more accurate",
-    Callback = function() 
-        _G.Vector = Vector3.new(math.huge, math.huge, math.huge)
-        hookMeta("Shoot", 6, _G.Vector)
-    end
-})
-
-Tabs.Reacts:Button({
-    Title = "Dribble React",
-    Desc = "Make your dribble more accurate",
-    Callback = function() 
-        hookMeta("Dribble", 2, player.Character.Humanoid)
-    end
-})
-
-Tabs.Reacts:Button({
-    Title = "Flick React",
-    Desc = "Make your Flick w [G] more BEST",
-    Callback = function() 
-        if _G.OldFlickReact then return end
-        _G.OldFlickReact = true
-        hookMeta("Flick", nil, nil)
-    end
-})
-
-Tabs.Reacts:Slider({
-    Title = "AvgSkillProbabillity",
-    Desc = "Combines with save react",
-    Value = { 
-        Min = 1000, 
-        Max = 2000, 
-        Default = 1500
-    },
-    Callback = function(value)
-        if workspaceTPS then
-            workspaceTPS.Velocity = Vector3.new(value, value, value)
-        end
-    end
-})
-
-Tabs.Reacts:Section({ Title = "âš”ï¸Player Reactsâš”ï¸",TextXAlignment = "Left",TextSize = 17})
-
-Tabs.Reacts:Button({
-    Title = "Less Delay in Ball",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DamThien332/Atlas.dev/refs/heads/main/Misc/LessDelay.lua"))()
-    end,
-})
-
-local function tpspp(Value)
-    local tpsSystem = workspace:FindFirstChild("TPSSystem")
-    if tpsSystem then
-        local tps = tpsSystem:FindFirstChild("TPS")
-        if tps and tps:IsA("Part") then
-            local properties = Value and PhysicalProperties.new(0.05, 0.3, 0.5, 1, 0.5) 
-            or PhysicalProperties.new(0.7, 0.3, 0.5, 1, 1)
-            tps.CustomPhysicalProperties = properties
-        end
-    end
+end)
+return frame
 end
 
-Tabs.Reacts:Toggle({
-    Title = "Fszinn React",
-    Value = false,
-    Icon = "check",
-    Callback = function(Value)
-        tpspp(Value) 
-    end
-})
+local function CreateButton(parent, text, callback)
+local f = Instance.new("Frame")
+f.Size = UDim2.new(1,-20,0,32)
+f.BackgroundColor3 = Color3.fromRGB(18,18,18)
+f.BackgroundTransparency = 0.2
+f.Parent = parent
+Instance.new("UICorner", f).CornerRadius = UDim.new(0,8)
 
-Tabs.Reacts:Toggle({
-    Title = "Nexus React",
-    Value = false,
-    Icon = "check",
-    Callback = function(Value)
-        tpspp(Value) 
-    end
-})
+local b = Instance.new("TextButton")
+b.Size = UDim2.new(1,0,1,0)
+b.BackgroundTransparency = 1
+b.Text = text
+b.TextColor3 = Color3.new(1,1,1)
+b.Font = Enum.Font.GothamSemibold
+b.TextSize = 14
+b.Parent = f
+b.MouseButton1Click:Connect(callback)
+return f
+end
 
------////////////////gamepasses
-Tabs.Gamepass:Section({ Title = "Gamepasses", TextXAlignment = "Left", TextSize = 20 })
-Tabs.Gamepass:Paragraph({Title = "Information About Gamepasses",Desc = "Basically it gives you some gamepasses for free, I didn't put the cards and captain ones because they are useless and will only be used to steal your robux lol"})
+local ballList = {}
+local ballNames = {AIFA=true,VEF=true,VRF=true,CBM=true,TRS=true,TPS=true,Bomb=true,bomb=true,Ball=true,Football=true,SAML=true,SSS=true,RSA=true,IFF=true,MPS=true}
 
-Tabs.Gamepass:Toggle({
-    Title = "Blue Flame",
-    Value = false,
-    Icon = "check",
-    Callback = function(value)
-        blueflme = value
-        bflame(value)
-    end
-})
+local function isBall(p)
+return p:IsA("BasePart") and ballNames[p.Name]
+end
 
-Tabs.Gamepass:Toggle({
-    Title = "Faster Cooldown",
-    Value = false,
-    Icon = "check",
-    Callback = function(value)
-        FasterCooldown(value) 
-    end
-})
+for _,v in Workspace:GetDescendants() do
+if isBall(v) then table.insert(ballList, v) end
+end
 
-Tabs.Gamepass:Toggle({
-    Title = "More Curve",
-    Value = false,
-    Icon = "check",
-    Callback = function(value)
-        MoreCurve(value)
-    end
-})
+Workspace.DescendantAdded:Connect(function(v)
+if isBall(v) then table.insert(ballList, v) end
+end)
 
-Tabs.Gamepass:Button({
-    Title = "Gamepass Controller",
-    Icon = "check",
-    Callback = function()
-        GamepassController()  
-    end
-})
+Workspace.DescendantRemoving:Connect(function(v)
+for i = #ballList, 1, -1 do
+if ballList[i] == v then table.remove(ballList, i) end
+end
+end)
 
---////Skills Helpers
+local character = player.Character or player.CharacterAdded:Wait()
+local headPart, legs, arms = nil, {}, {}
 
-Tabs.Helpers:Section({ Title = "Skills Helpers", TextXAlignment = "Left", TextSize = 20 })
-Tabs.Helpers:Paragraph({Title = "Simple Guide",Desc = "Basically it helps you skill more easily, I recommend you use it wisely. Because if you don't know how to use it, you will be accused of scripting and with proof",})
-Tabs.Helpers:Section({ Title = "Helpers", TextXAlignment = "Left", TextSize = 17 })
+local legNames = {"LL","RL","Left Leg","Right Leg","Fake_LL","Fake_RL","LeftLowerLeg","LeftUpperLeg","RightLowerLeg","RightUpperLeg","LeftFoot","RightFoot"}
+local armNames = {"LA","RA","Left Arm","Right Arm","Fake_LA","Fake_RA","LeftLowerArm","LeftUpperArm","RightLowerArm","RightUpperArm","LeftHand","RightHand"}
 
-Tabs.Helpers:Toggle({
-    Title = "Enable Air Dribble Helper",
-    Value = false,
-    Icon = "check",
-    Callback = function(value)
-        local Ball = game.Workspace.TPSSystem.TPS
-        if value then
-            getgenv().boxsettings = {
-                box = {
-                    bxsize = Vector3.new(bxsize, bxsize, bxsize),
-                    markerOffset = Vector3.new(0, -1, 0),
-                    boxtransparency = 1,
-                },
-            }
-            marker = Instance.new("Part")
-            marker.Name = "TPS"
-            marker.Anchored = true
-            marker.Transparency = getgenv().boxsettings.box.boxtransparency
-            marker.Parent = Ball.Parent
-            atlasaircnt = game:GetService("RunService").Heartbeat:Connect(function()
-                marker.Size = Vector3.new(bxsize, 0, bxsize)
-                marker.CFrame = CFrame.new(Ball.Position + getgenv().boxsettings.box.markerOffset)
-            end)
-        else
-            if atlasaircnt then atlasaircnt:Disconnect() end
-            if marker then marker:Destroy() end
-        end
-    end
-})
+local function updateLimbs(c)
+legs = {}
+arms = {}
+for _, n in legNames do
+local p = c:FindFirstChild(n)
+if p and p:IsA("BasePart") then table.insert(legs, p) end
+end
+for _, n in armNames do
+local p = c:FindFirstChild(n)
+if p and p:IsA("BasePart") then table.insert(arms, p) end
+end
+headPart = c:FindFirstChild("Head") or c:FindFirstChild("H")
+end
 
-Tabs.Helpers:Input({
-    Title = "Air Dribble Size",
-    PlaceholderText = "Input Size",
-    ClearTextOnFocus = false,
-    Callback = function(value)
-        bxsize = tonumber(value) or 0
-        if getgenv().boxsettings then
-            getgenv().boxsettings.box.bxsize = Vector3.new(bxsize, bxsize, bxsize)
-            if marker then
-                marker.Size = Vector3.new(bxsize, 0, bxsize)
-            end
-        end
-    end
-})
+updateLimbs(character)
 
-Tabs.Helpers:Toggle({
-    Title = "Infinite Head Helper",
-    Value = false,
-    Icon = "check",
-    Callback = function(value)
-        if value then
-			game.Workspace.TPSSystem.TPS.CanCollide = false
-		else
-			game.Workspace.TPSSystem.TPS.CanCollide = true
-		end
-    end
-})
+player.CharacterAdded:Connect(function(c)
+character = c
+task.wait(1)
+updateLimbs(c)
+end)
 
-Tabs.Helpers:Button({
-    Title = "ZZZ Helper",
-    Callback = function()
-        local Ball = game.Workspace.TPSSystem.TPS
-        Ball.Size = Vector3.new(2.89, 2.89, 2.89)
-        getgenv().boxsettings = {
-          box = {
-            boxsize = Vector3.new(5, 0, 5),
-            markerOffset = Vector3.new(0, -1, 0),
-            boxtransparency = 1,
-          },
-        }
-        local marker = Instance.new("Part", Ball.Parent)
-        marker.Name = "TPS"
-        marker.Size = getgenv().boxsettings.box.boxsize
-        marker.Anchored = true
-        marker.Transparency = getgenv().boxsettings.box.boxtransparency
-        game:GetService("RunService").Stepped:Connect(function()
-          marker.CFrame = CFrame.new(Ball.Position + getgenv().boxsettings.box.markerOffset)
-        end)
-    end,
-})
+local legVis, armVis, headVis = nil, nil, nil
 
-Tabs.Helpers:Button({
-    Title = "Infinite Fast Helper",
-    Callback = function()
-        loadstring(game:HttpGet("https://paste.ee/r/gqMgxDMB"))()
-    end,
-})
+local function makeVis(color)
+local p = Instance.new("Part")
+p.Anchored = true
+p.CanCollide = false
+p.Transparency = 0.65
+p.Material = Enum.Material.ForceField
+p.Color = color
+p.Shape = Enum.PartType.Ball
+p.Size = Vector3.new(1,1,1)
+p.Parent = Workspace
+return p
+end
 
---//////Miscellaneous
-Tabs.Misc:Section({ Title = "Miscellaneous", TextXAlignment = "Left", TextSize = 20 })
-Tabs.Misc:Paragraph({Title = "Guide",Desc = "Basically some functions that many people don't use, so I put them in a separate tab, I don't know why people don't use this. But I guarantee that they are useful things :)",})
-Tabs.Misc:Section({ Title = "Humanoid Changes", TextXAlignment = "Left", TextSize = 17 })
-Tabs.Misc:Slider({
-    Title = "Walkspeed Changer",
-    Step = 1,
-    Value = {
-        Min = 22,
-        Max = 100,
-        Default = 22,
-    },
-    Callback = function(value) 
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
-    end
-})
-Tabs.Misc:Slider({
-    Title = "JumpPower Changer",
-    Step = 1,
-    Value = {
-        Min = 50,
-        Max = 100,
-        Default = 50,
-    },
-    Callback = function(value) 
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
-    end
-})
+local legOn, legX, legY, legZ = false, 3.5, 3.5, 3.5
+local legShow = false
+local armOn, armX, armY, armZ = false, 3.5, 3.5, 3.5
+local armShow = false
+local headOn, headSize = false, 3.5
+local headShow = false
+local ballOn, ballSize, ballShow = false, 3.5, false
+local ballVisors = {}
 
-Tabs.Misc:Section({ Title = "Level Changer", TextXAlignment = "Left", TextSize = 17 })
+local noBallDelayOn = false
+local betterReactOn = false
+local opReactOn = false
+local attackerReactOn = false
+local midfielderReactOn = false
+local defenderReactOn = false
+local gkReactOn = false
+local currentHook = nil
 
-Tabs.Misc:Input({
-    Title = "Level Changer",
-    PlaceholderText = "Input Number",
-    ClearTextOnFocus = false,
-    Callback = function(value)
-        local Targets
-        Targets = tonumber(value)
-        task.wait(0.1)
-    local mt = getrawmetatable(game);
-    setreadonly(mt, false);
-    local old_index = mt.__index;
-    mt.__index = function(a, b)
-        if tostring(a) == "PPLevel" or tostring(a) == "Level" then
-            if tostring(b) == "Value" then
-                return Targets;
-            end
-        end
-            return old_index(a, b);
-        end
-    end
-})
+local betterReactX = 250
+local betterReactY = 250
+local betterReactZ = 250
+local opReactX = 400
+local opReactY = 0
+local opReactZ = 400
 
-Tabs.Misc:Section({ Title = "Ball Modifications", TextXAlignment = "Left", TextSize = 17 })
+local G_REACH = 4
+local J_REACH = 5
+local AIR_X = 3.5
+local AIR_Y = 5
+local AIR_Z = 3
+local reachEnabled = false
 
-Tabs.Misc:Button({
-    Title = "Anti Ball Fling",
-    Callback = function()
-        loadstring(game:HttpGet("https://paste.ee/r/EPwFBNOx"))()
-    end,
-})
+local khalidG_REACH = 4
+local khalidJ_REACH = 5
+local khalidAIR_X = 3.5
+local khalidAIR_Y = 5
+local khalidAIR_Z = 3
+local khalidVelPower = 135
+local khalidVelHeight = 8
+local khalidReachEnabled = false
 
-Tabs.Misc:Slider({
-    Title = "Ball Size",
-    Step = 0.01,
-    Value = {
-        Min = 2,
-        Max = 10,
-        Default = 2.6,
-    },
-    Callback = function(value) 
-        local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-        if humanoid then
-            if heathKL then
-                heathKL:Disconnect()
-                heathKL = nil
-            end
-            heathKL = humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-                if humanoid.Health == 0 then
-                    humanoid.Health = 100 
-                end
-            end)
-        end
-        game.Workspace.TPSSystem.TPS.Size = Vector3.new(value, value, value)
-        task.delay(1, function()
-            if heathKL then
-                heathKL:Disconnect()
-                heathKL = nil
-            end
-        end)
-    end
-})
+local baseG_REACH = 4
+local baseJ_REACH = 5
+local baseAIR_X = 3.5
+local baseAIR_Y = 5
+local baseAIR_Z = 3
+local baseVelPower = 135
+local baseVelHeight = 8
 
-Tabs.Misc:Section({ Title = "Anothers Miscellaneous Funcs", TextXAlignment = "Left", TextSize = 17 })
+local Camera = workspace.CurrentCamera
 
-Tabs.Misc:Input({
-    Title = "Avatar Stolen",
-    PlaceholderText = "Input Nickname",
-    ClearTextOnFocus = false,
-    Callback = function(value)
-        DisguiseUsername.Value = value
-        Disguise.Enabled = true
-        DisguiseCharacter(lplr.Character)
-    end
-})
+local function removeHook()
+if currentHook then
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+mt.__namecall = currentHook
+setreadonly(mt, true)
+currentHook = nil
+end
+end
 
-Tabs.Misc:Toggle({
-    Title = "Allow you Shot in Gk Box",
-    Default = false,
-    Icon = "check",
-    Callback = function(value)
-        if value then
-            game:GetService("Workspace").GKSystem.Fix1.CanTouch = false
-            game:GetService("Workspace").GKSystem.Fix2.CanTouch = false
-        else
-            game:GetService("Workspace").GKSystem.Fix1.CanTouch = true
-            game:GetService("Workspace").GKSystem.Fix2.CanTouch = true
-      end
-    end
-})
+if PlayerTab then
+local stealerFrame = Instance.new("Frame")
+stealerFrame.Size = UDim2.new(1, -20, 0, 80)
+stealerFrame.BackgroundColor3 = Color3.fromRGB(18,18,18)
+stealerFrame.BackgroundTransparency = 0.2
+stealerFrame.Parent = PlayerTab
+Instance.new("UICorner", stealerFrame).CornerRadius = UDim.new(0,8)
 
-Tabs.Misc:Toggle({
-    Title = "Break through the walls of power",
-    Default = false,
-    Icon = "check",
-    Callback = function(value)
-        if value then
-            _G.Wall = true
-                while _G.Wall do
-                wait()
-                for i,v in pairs(game.Workspace:GetChildren()) do
-                    if v.Name == "Wall" then
-                       v.CanCollide = false
-                    end
-                end
-            end
-        else
-            _G.Wall = false
-        end
-    end
-})
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 24)
+titleLabel.Position = UDim2.new(0, 12, 0, 8)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Avatar Stealer"
+titleLabel.TextColor3 = MAIN_COLOR
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 16
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = stealerFrame
 
-Tabs.Misc:Dropdown({
-    Title = "Select an Shiftlock",
-    Values = {"None", "Default", "Ipad/Tablet", "Left"},
-    Value = "None", 
-    Callback = function(value) 
-        local urls = {
-            None = '',
-            Default = 'https://raw.githubusercontent.com/Unknownproootest/Permanent-Shift-Lock-Alt/alt/PermShiftlockAlt',
-            ["Ipad/Tablet"] = 'https://raw.githubusercontent.com/Unknownproootest/Permanent-Shift-Lock-Beta/alt/PermShiftlockV2-alt',
-            Left = 'https://raw.githubusercontent.com/Unknownproootest/Permanent-Shift-Lock-Beta/alt/PermShiftlockLeft'
-        }
-        if urls[value] and urls[value] ~= '' then  
-            loadstring(game:HttpGet(urls[value]))()
-        else
-            warn("Error: " .. tostring(value))
-        end
-    end
-})
+local inputBox = Instance.new("TextBox")
+inputBox.Size = UDim2.new(0.65, 0, 0, 32)
+inputBox.Position = UDim2.new(0, 12, 0, 38)
+inputBox.BackgroundColor3 = Color3.fromRGB(30,30,30)
+inputBox.TextColor3 = Color3.new(1,1,1)
+inputBox.PlaceholderText = "Enter username here..."
+inputBox.Font = Enum.Font.Gotham
+inputBox.TextSize = 14
+inputBox.ClearTextOnFocus = false
+inputBox.Parent = stealerFrame
+Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0,6)
 
---////Game Changers
-Tabs.Game:Section({ Title = "Game - Changers", TextXAlignment = "Left", TextSize = 20 })
-Tabs.Game:Paragraph({Title = "Guide",Desc = "Functions that will change the game, such as removing textures, changing them, optimizing, changing certain things that cannot be done, and so on. I will soon bring a feature to change things on the cards, but I don't have time most of the week.",})
-Tabs.Game:Section({ Title = "Functions", TextXAlignment = "Left", TextSize = 17 })
+local applyBtn = Instance.new("TextButton")
+applyBtn.Size = UDim2.new(0.3, 0, 0, 32)
+applyBtn.Position = UDim2.new(0.68, 0, 0, 38)
+applyBtn.BackgroundColor3 = MAIN_COLOR
+applyBtn.Text = "Apply"
+applyBtn.TextColor3 = Color3.new(1,1,1)
+applyBtn.Font = Enum.Font.GothamBold
+applyBtn.TextSize = 14
+applyBtn.Parent = stealerFrame
+Instance.new("UICorner", applyBtn).CornerRadius = UDim.new(0,6)
 
-local default = game.Workspace.SoccerFieldParts.SoccerField.Color
+local currentStealTarget = nil
 
-Tabs.Game:Colorpicker({
-    Title = "Grass Color",
-    Desc = "Change gram color",
-    Transparency = 0.2,
-    Default = default,
-    Callback = function(Value)
-        local soccerField = game.Workspace.SoccerFieldParts:FindFirstChild("SoccerField")
-        if soccerField then
-            soccerField.Color = Value
-        end
-    end
-})
-
-Tabs.Game:Button({
-    Title = "FPS Booster",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DamThien332/Atlas.dev/refs/heads/main/Src/FPSBooster.lua"))()
-    end,
-})
-
-Tabs.Game:Button({
-    Title = "Nostaligc TPS Version",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DamThien332/Atlas.dev/refs/heads/main/Misc/OldTPS.lua"))()
-    end,
-})
-
-Tabs.Game:Button({
-    Title = "Remove Map",
-    Callback = function()
-        for _, v in pairs(game.Workspace:GetChildren()) do
-            if v.Name == "Map" then
+local function RemoveOldAppearance(character)
+    for _, v in ipairs(character:GetChildren()) do
+        if v:IsA("Accessory") or v:IsA("Shirt") or v:IsA("Pants") or v:IsA("BodyColors") or v:IsA("ShirtGraphic") then
             v:Destroy()
         end
     end
-    end,
-})
-
----/===/// Troll Functions
-Tabs.Troll:Section({ Title = "Troll Functions", TextXAlignment = "Left", TextSize = 20 })
-Tabs.Troll:Paragraph({Title = "Why it has few functions",Desc = "Basically Tayfun is releasing several updates to destroy the game in order to fix these troll functions, but wait because soon there will be more functions to troll :p",})
-
-Tabs.Troll:Section({ Title = "Kill Function", TextXAlignment = "Left", TextSize = 17 })
-
-Tabs.Troll:Input({
-    Title = "Player's Name",
-    PlaceholderText = "Input Nickname",
-    ClearTextOnFocus = false,
-    Callback = function(value)
-        TargPlayer = unpack(GetPlayer(value))
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        local emptyDesc = Instance.new("HumanoidDescription")
+        humanoid:ApplyDescriptionClientServer(emptyDesc)
     end
-})
-
-Tabs.Troll:Button({
-    Title = "Kill Player",
-    Desc = "Kill Player In The Server",
-    Callback = function()
-        local PowerEvent = workspace:WaitForChild("FE"):WaitForChild("Powers"):WaitForChild("Power")
-        PowerEvent:FireServer(4)
-        task.wait(0.25)
-              game.Players.LocalPlayer.Character.HumanoidRootPart.Fire:Destroy()
-              game.Players.LocalPlayer.Character.HumanoidRootPart.PointLight:Destroy()
-               for i,v in pairs(TargPlayer.Character:GetChildren()) do
-               if v:IsA("BasePart") then
-               v.Anchored = true
-               v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-            end
-        end
-    end,
-})
-
-Tabs.Troll:Section({ Title = "Another Options for Kill", TextXAlignment = "Left", TextSize = 17 })
-
-Tabs.Troll:Button({ Title = "Kill All", Callback = function() KillTeam(nil) end })
-Tabs.Troll:Button({ Title = "Kill Blue Team", Callback = function() KillTeam("Bright blue") end })
-Tabs.Troll:Button({ Title = "Kill Red Team", Callback = function() KillTeam("Bright red") end })
-
-Tabs.Troll:Section({ Title = "Don't abuse it so much", TextXAlignment = "Left", TextSize = 17 })
-
-Tabs.Troll:Button({
-    Title = "Crash The Ball",
-    Desc = "Basically performs a movement that crashes the ball, Very overpowered function",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DamThien332/Atlas.dev/refs/heads/main/Misc/CrashBall.lua"))()
-    end
-})
-
--- // Skyes // --
-Tabs.Skyes:Section({ Title = "Skyes", TextXAlignment = "Left", TextSize = 20 })
-local function ApplySkybox(skyData)
-    local skybox = Instance.new("Sky")
-    skybox.Parent = game.Lighting
-    skybox.SkyboxBk = "rbxassetid://" .. skyData.Bk
-    skybox.SkyboxDn = "rbxassetid://" .. skyData.Dn
-    skybox.SkyboxFt = "rbxassetid://" .. skyData.Ft
-    skybox.SkyboxLf = "rbxassetid://" .. skyData.Lf
-    skybox.SkyboxRt = "rbxassetid://" .. skyData.Rt
-    skybox.SkyboxUp = "rbxassetid://" .. skyData.Up
-    skybox.StarCount = skyData.StarCount or 0
 end
 
-local skyboxes = {
-    NightSky = {Bk="12064107", Dn="12064152", Ft="12064121", Lf="12063984", Rt="12064115", Up="12064131", StarCount=0},
-    ScaryNight = {Bk="48020371", Dn="48020144", Ft="48020234", Lf="48020211", Rt="48020254", Up="48020383", StarCount=3000},
-    SakuraSky = {Bk="271042516", Dn="271077243", Ft="271042556", Lf="271042310", Rt="271042467", Up="271077958", StarCount=1334},
-    CakeUpNightSkyGalaxyPlanets = {Bk="15983968922", Dn="15983966825", Ft="15983965025", Lf="15983967420", Rt="15983966246", Up="15983964246", StarCount=3000},
-    PurpleNightSky = {Bk="5084575798", Dn="5084575916", Ft="5103949679", Lf="5103948542", Rt="5103948784", Up="5084576400", StarCount=3000},
-    SunsetOrange = {Bk="458016711", Dn="458016826", Ft="458016532", Lf="458016655", Rt="458016782", Up="458016792", StarCount=3000},
-    PurpleSky = {Bk="570557514", Dn="570557775", Ft="570557559", Lf="570557620", Rt="570557672", Up="570557727", StarCount=3000},
-    GraySky = {Bk="18703245834", Dn="18703243349", Ft="18703240532", Lf="18703237556", Rt="18703235430", Up="18703232671", StarCount=3500},
-    MountainSky = {Bk="160188495", Dn="160188614", Ft="160188609", Lf="160188589", Rt="160188597", Up="160188588", StarCount=3000},
-    PinkiePreppySky = {Bk="11555017034", Dn="11555013415", Ft="11555010145", Lf="11555006545", Rt="11555000712", Up="11554996247", StarCount=3000},
-    MountainSky2 = {Bk="368385273", Dn="48015300", Ft="368388290", Lf="368390615", Rt="368385190", Up="48015387", StarCount=3000},
-    SunsetMountainSky = {Bk="17901353811", Dn="17901366771", Ft="17901356262", Lf="17901359687", Rt="17901362326", Up="17901365106", StarCount=3000}
-}
-
-local function AddSkyboxButton(name, title)
-    Tabs.Skyes:Button({
-        Title = title,
-        Callback = function()
-            ApplySkybox(skyboxes[name])
+local function ApplyAvatarSteal(character, username)
+    if not character or not username or username == "" then return end
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then
+        task.delay(0.6, function() ApplyAvatarSteal(character, username) end)
+        return
+    end
+    RemoveOldAppearance(character)
+    task.spawn(function()
+        local success, result = pcall(function()
+            local userId = Players:GetUserIdFromNameAsync(username)
+            local desc = Players:GetHumanoidDescriptionFromUserId(userId)
+            humanoid:ApplyDescriptionClientServer(desc)
+        end)
+        if success then
+            currentStealTarget = username
+            print("[Avatar Stealer] Applied @" .. username .. " avatar!")
+        else
+            warn("[Avatar Stealer] Failed for @" .. username .. " → " .. tostring(result))
         end
-    })
+    end)
 end
-AddSkyboxButton("NightSky", "Night Sky")
-AddSkyboxButton("ScaryNight", "Scary Night")
-AddSkyboxButton("SakuraSky", "Sakura Sky")
-AddSkyboxButton("CakeUpNightSkyGalaxyPlanets", "Cake Up Night Sky Galaxy Planets")
-AddSkyboxButton("PurpleNightSky", "Purple Night Sky")
-AddSkyboxButton("SunsetOrange", "Sunset Orange")
-AddSkyboxButton("PurpleSky", "Purple Sky")
-AddSkyboxButton("GraySky", "Gray Sky")
-AddSkyboxButton("MountainSky", "Mountain Sky")
-AddSkyboxButton("PinkiePreppySky", "Pinkie Preppy Sky")
-AddSkyboxButton("MountainSky2", "Mountain Sky 2")
-AddSkyboxButton("SunsetMountainSky", "Sunset Mountain Sky")
 
-local v99 = Instance.new("ScreenGui")
-local v100 = Instance.new("ImageButton")
-local v101 = Instance.new("UICorner") 
-
-v99.Parent = game.CoreGui
-v99.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-v100.Parent = v99
-v100.BackgroundColor3 = Color3.fromRGB(1, 1, 1)
-v100.BackgroundTransparency = 1
-v100.BorderSizePixel = 0
-v100.Position = UDim2.new(3.3908420959960495e-07, 209, 0, -47)
-v100.Size = UDim2.new(0, 45, 0, 45)
-v100.Draggable = true
-v100.Image = "http://www.roblox.com/asset/?id=113410311161374"
-
-v101.CornerRadius = UDim.new(1, 0) 
-v101.Parent = v100 
-
-v100.MouseButton1Down:Connect(function()
-	game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.G, false, game)
+player.CharacterAdded:Connect(function(char)
+    task.wait(0.8)
+    if currentStealTarget then
+        ApplyAvatarSteal(char, currentStealTarget)
+    end
 end)
 
-Tabs.Configs:Button({
-    Title = "Make The 'Atlas' Logo invisible",
-    Desc = "You can still click on it to open the script but it will be invisible",
-    Callback = function()
-        if v100 then
-			v100.Image = "" 
-		end
+applyBtn.MouseButton1Click:Connect(function()
+    local username = inputBox.Text:gsub("^%s*(.-)%s*$", "%1")
+    if username ~= "" and player.Character then
+        ApplyAvatarSteal(player.Character, username)
     end
-})
+end)
+
+applyBtn.MouseEnter:Connect(function()
+    TS:Create(applyBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 169, 255)}):Play()
+end)
+
+applyBtn.MouseLeave:Connect(function()
+    TS:Create(applyBtn, TweenInfo.new(0.2), {BackgroundColor3 = MAIN_COLOR}):Play()
+end)
+
+CreateToggle(PlayerTab, "Auto Inf Fast", function(enabled)
+    autoInfFastToggleEnabled = enabled
+    if not enabled then
+        autoFollowEnabled = false
+    end
+end)
+
+CreateKeybindButton(PlayerTab, autoInfFastKey, "Auto Inf Fast Keybind", function(newKey)
+    autoInfFastKey = newKey
+end)
+
+local function updateZZZHelper(enabled)
+    zzzHelperEnabled = enabled
+    local tpsSystem = Workspace:FindFirstChild("TPSSystem")
+    if not tpsSystem then return end
+    local Ball = tpsSystem:FindFirstChild("TPS")
+    if not Ball then return end
+    if enabled then
+        if not originalBallSize then
+            originalBallSize = Ball.Size
+        end
+        Ball.Size = Vector3.new(2.89, 2.89, 2.89)
+        if not zzzMarker then
+            zzzMarker = Instance.new("Part")
+            zzzMarker.Name = "TPS"
+            zzzMarker.Size = Vector3.new(5, 0, 5)
+            zzzMarker.Anchored = true
+            zzzMarker.Transparency = 1
+            zzzMarker.Parent = Ball.Parent
+        end
+    else
+        if originalBallSize then
+            Ball.Size = originalBallSize
+        end
+        if zzzMarker then
+            zzzMarker:Destroy()
+            zzzMarker = nil
+        end
+    end
+end
+
+CreateToggle(PlayerTab, "ZZZ Helper", function(enabled)
+    zzzHelperToggleEnabled = enabled
+    if enabled then
+        updateZZZHelper(true)
+    else
+        updateZZZHelper(false)
+    end
+end)
+
+CreateKeybindButton(PlayerTab, zzzHelperKey, "ZZZ Helper Keybind", function(newKey)
+    zzzHelperKey = newKey
+end)
+
+local function updateAirDribbleHelper(enabled)
+    airDribbleEnabled = enabled
+    if enabled then
+        local tpsSystem = workspace:FindFirstChild("TPSSystem")
+        if not tpsSystem then return end
+        local ball = tpsSystem:FindFirstChild("TPS")
+        if not ball then return end
+        if not airDribblePart or not airDribblePart.Parent then
+            airDribblePart = Instance.new("Part")
+            airDribblePart.Name = "AirDribbleHelper"
+            airDribblePart.Size = Vector3.new(airDribbleSize, 0.001, airDribbleSize)
+            airDribblePart.Transparency = 1
+            airDribblePart.CanCollide = true
+            airDribblePart.Anchored = true
+            airDribblePart.Massless = true
+            airDribblePart.Parent = ball
+        end
+        task.spawn(function()
+            while airDribblePart and airDribblePart.Parent and airDribbleEnabled do
+                if ball and ball.Parent then
+                    local pos = ball.Position
+                    local sizeY = ball.Size.Y
+                    airDribblePart.CFrame = CFrame.new(pos.X, pos.Y - sizeY/2, pos.Z)
+                end
+                task.wait()
+            end
+        end)
+    else
+        if airDribblePart then
+            airDribblePart:Destroy()
+            airDribblePart = nil
+        end
+    end
+end
+
+CreateToggle(PlayerTab, "Air Dribble Helper", function(enabled)
+    airDribbleHelperToggleEnabled = enabled
+    updateAirDribbleHelper(enabled)
+end)
+
+CreateKeybindButton(PlayerTab, airDribbleKey, "Air Dribble Helper Keybind", function(newKey)
+    airDribbleKey = newKey
+end)
+
+CreateSlider(PlayerTab, "Air Dribble Size", 1, 12, airDribbleSize, 0.5, function(value)
+    airDribbleSize = value
+    if airDribblePart and airDribblePart.Parent then
+        airDribblePart.Size = Vector3.new(value, 0.001, value)
+    end
+end)
+end
+
+if ReactTab then
+CreateToggle(ReactTab, "No Ball Delay", function(v) noBallDelayOn = v end)
+CreateToggle(ReactTab, "Better React", function(on)
+betterReactOn = on
+opReactOn = false
+end)
+CreateToggle(ReactTab, "OP React", function(on)
+opReactOn = on
+betterReactOn = false
+end)
+CreateToggle(ReactTab, "Attacker React", function(on)
+attackerReactOn = on
+if on then
+removeHook()
+local mt = getrawmetatable(game)
+local old = mt.__namecall
+currentHook = old
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(self, ...)
+local args = {...}
+local method = getnamecallmethod()
+if method == "FireServer" then
+local remoteName = tostring(self)
+if remoteName == "KickG1" or remoteName == "KickG2" or remoteName == "KickC1" or remoteName == "KickC2" or remoteName == "KickP1" or remoteName == "KickP2" then
+args[2] = player.Character.Humanoid.LLCL
+return old(self, unpack(args))
+end
+end
+return old(self, ...)
+end)
+setreadonly(mt, true)
+else
+removeHook()
+end
+if on then
+midfielderReactOn = false
+defenderReactOn = false
+gkReactOn = false
+end
+end)
+CreateToggle(ReactTab, "Midfielder React", function(on)
+midfielderReactOn = on
+if on then
+removeHook()
+local mt = getrawmetatable(game)
+local old = mt.__namecall
+currentHook = old
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(self, ...)
+local args = {...}
+local method = getnamecallmethod()
+if method == "FireServer" then
+local remoteName = tostring(self)
+if remoteName == "Tackle" or remoteName == "Header" or remoteName == "KickG1" or remoteName == "KickG2" or remoteName == "KickC1" or remoteName == "KickC2" or remoteName == "KickP1" or remoteName == "KickP2" then
+args[2] = player.Character.Humanoid.LLCL
+return old(self, unpack(args))
+end
+end
+return old(self, ...)
+end)
+setreadonly(mt, true)
+else
+removeHook()
+end
+if on then
+attackerReactOn = false
+defenderReactOn = false
+gkReactOn = false
+end
+end)
+CreateToggle(ReactTab, "Defender React", function(on)
+defenderReactOn = on
+if on then
+removeHook()
+local mt = getrawmetatable(game)
+local old = mt.__namecall
+currentHook = old
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(self, ...)
+local args = {...}
+local method = getnamecallmethod()
+if method == "FireServer" then
+local remoteName = tostring(self)
+if remoteName == "Tackle" or remoteName == "Header" then
+args[2] = player.Character.Humanoid.LLCL
+return old(self, unpack(args))
+end
+end
+return old(self, ...)
+end)
+setreadonly(mt, true)
+else
+removeHook()
+end
+if on then
+attackerReactOn = false
+midfielderReactOn = false
+gkReactOn = false
+end
+end)
+end
+
+if GoalkeeperReactTab then
+CreateToggle(GoalkeeperReactTab, "GK React", function(on)
+gkReactOn = on
+if on then
+removeHook()
+local mt = getrawmetatable(game)
+local old = mt.__namecall
+currentHook = old
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(self, ...)
+local args = {...}
+local method = getnamecallmethod()
+if method == "FireServer" then
+local remoteName = tostring(self)
+if remoteName == "SaveRA" or remoteName == "SaveLA" or remoteName == "SaveRL" or remoteName == "SaveLL" or remoteName == "SaveT" or remoteName == "Tackle" or remoteName == "Header" then
+args[2] = player.Character.Humanoid.LLCL
+return old(self, unpack(args))
+end
+end
+return old(self, ...)
+end)
+setreadonly(mt, true)
+else
+removeHook()
+end
+if on then
+attackerReactOn = false
+midfielderReactOn = false
+defenderReactOn = false
+end
+end)
+end
+
+if ReactPercentTab then
+CreateSlider(ReactPercentTab, "Better React X", 0, 500, 250, 10, function(v) betterReactX = v end)
+CreateSlider(ReactPercentTab, "Better React Y", 0, 500, 250, 10, function(v) betterReactY = v end)
+CreateSlider(ReactPercentTab, "Better React Z", 0, 500, 250, 10, function(v) betterReactZ = v end)
+CreateSlider(ReactPercentTab, "OP React X", 0, 500, 400, 10, function(v) opReactX = v end)
+CreateSlider(ReactPercentTab, "OP React Y", 0, 500, 0, 10, function(v) opReactY = v end)
+CreateSlider(ReactPercentTab, "OP React Z", 0, 500, 400, 10, function(v) opReactZ = v end)
+end
+
+if ReachTab then
+CreateToggle(ReachTab, "Enable Reach", function(v) reachEnabled = v end)
+CreateSlider(ReachTab, "Ground Reach", 0, 20, 4, 0.5, function(v) G_REACH = v end)
+CreateSlider(ReachTab, "Jump Reach", 0, 20, 5, 0.5, function(v) J_REACH = v end)
+CreateSlider(ReachTab, "Air X", 0, 20, 3.5, 0.5, function(v) AIR_X = v end)
+CreateSlider(ReachTab, "Air Y", 0, 20, 5, 0.5, function(v) AIR_Y = v end)
+CreateSlider(ReachTab, "Air Z", 0, 20, 3, 0.5, function(v) AIR_Z = v end)
+end
+
+if KhalidTab then
+CreateToggle(KhalidTab, "Enable Khalid Reach", function(v) khalidReachEnabled = v end)
+CreateSlider(KhalidTab, "Ground Reach", 0, 20, 4, 0.5, function(v) khalidG_REACH = v end)
+CreateSlider(KhalidTab, "Jump Reach", 0, 20, 5, 0.5, function(v) khalidJ_REACH = v end)
+CreateSlider(KhalidTab, "Air X", 0, 20, 3.5, 0.5, function(v) khalidAIR_X = v end)
+CreateSlider(KhalidTab, "Air Y", 0, 20, 5, 0.5, function(v) khalidAIR_Y = v end)
+CreateSlider(KhalidTab, "Air Z", 0, 20, 3, 0.5, function(v) khalidAIR_Z = v end)
+CreateSlider(KhalidTab, "Velocity Power", 50, 300, 135, 5, function(v) khalidVelPower = v end)
+CreateSlider(KhalidTab, "Velocity Height", 0, 20, 8, 1, function(v) khalidVelHeight = v end)
+
+CreateButton(KhalidTab, "Buff by 20%", function()
+khalidG_REACH = khalidG_REACH * 1.2
+khalidJ_REACH = khalidJ_REACH * 1.2
+khalidAIR_X = khalidAIR_X * 1.2
+khalidAIR_Y = khalidAIR_Y * 1.2
+khalidAIR_Z = khalidAIR_Z * 1.2
+khalidVelPower = khalidVelPower * 1.2
+khalidVelHeight = khalidVelHeight * 1.2
+end)
+
+CreateButton(KhalidTab, "Set 15%", function()
+khalidG_REACH = baseG_REACH * 1.15
+khalidJ_REACH = baseJ_REACH * 1.15
+khalidAIR_X = baseAIR_X * 1.15
+khalidAIR_Y = baseAIR_Y * 1.15
+khalidAIR_Z = baseAIR_Z * 1.15
+khalidVelPower = baseVelPower * 1.15
+khalidVelHeight = baseVelHeight * 1.15
+end)
+
+CreateButton(KhalidTab, "Set 25%", function()
+khalidG_REACH = baseG_REACH * 1.25
+khalidJ_REACH = baseJ_REACH * 1.25
+khalidAIR_X = baseAIR_X * 1.25
+khalidAIR_Y = baseAIR_Y * 1.25
+khalidAIR_Z = baseAIR_Z * 1.25
+khalidVelPower = baseVelPower * 1.25
+khalidVelHeight = baseVelHeight * 1.25
+end)
+
+CreateButton(KhalidTab, "Set 50%", function()
+khalidG_REACH = baseG_REACH * 1.5
+khalidJ_REACH = baseJ_REACH * 1.5
+khalidAIR_X = baseAIR_X * 1.5
+khalidAIR_Y = baseAIR_Y * 1.5
+khalidAIR_Z = baseAIR_Z * 1.5
+khalidVelPower = baseVelPower * 1.5
+khalidVelHeight = baseVelHeight * 1.5
+end)
+
+CreateButton(KhalidTab, "Set 75%", function()
+khalidG_REACH = baseG_REACH * 1.75
+khalidJ_REACH = baseJ_REACH * 1.75
+khalidAIR_X = baseAIR_X * 1.75
+khalidAIR_Y = baseAIR_Y * 1.75
+khalidAIR_Z = baseAIR_Z * 1.75
+khalidVelPower = baseVelPower * 1.75
+khalidVelHeight = baseVelHeight * 1.75
+end)
+
+CreateButton(KhalidTab, "Set 100%", function()
+khalidG_REACH = baseG_REACH * 2
+khalidJ_REACH = baseJ_REACH * 2
+khalidAIR_X = baseAIR_X * 2
+khalidAIR_Y = baseAIR_Y * 2
+khalidAIR_Z = baseAIR_Z * 2
+khalidVelPower = baseVelPower * 2
+khalidVelHeight = baseVelHeight * 2
+end)
+end
+
+RunService.Heartbeat:Connect(function()
+local connected = false
+local TPSSystem = Workspace:FindFirstChild("TPSSystem")
+if TPSSystem then
+local Ball = TPSSystem:FindFirstChild("TPS")
+if Ball then connected = true end
+else
+connected = #ballList > 0
+end
+Dot.BackgroundColor3 = connected and MAIN_COLOR or Color3.fromRGB(255,0,0)
+StatusLabel.Text = connected and "CONNECTED" or "NOT CONNECTED"
+StatusLabel.TextColor3 = connected and MAIN_COLOR or Color3.fromRGB(255,0,0)
+
+local TPSSystem = Workspace:FindFirstChild("TPSSystem")
+if TPSSystem then
+    local Ball = TPSSystem:FindFirstChild("TPS")
+    if Ball and Ball:IsA("BasePart") then
+        if betterReactOn then
+            Ball.Velocity = Vector3.new(betterReactX, betterReactY, betterReactZ)
+        elseif opReactOn then
+            Ball.Velocity = Vector3.new(opReactX, opReactY, opReactZ)
+        end
+    end
+end
+
+local hrp = character and character:FindFirstChild("HumanoidRootPart")
+if legShow and legVis and #legs > 0 and hrp then
+    local sum = Vector3.new()
+    for _,l in legs do sum = sum + l.Position end
+    local center = sum / #legs
+    local offset = hrp.CFrame:PointToObjectSpace(center)
+    legVis.CFrame = hrp.CFrame * CFrame.new(offset)
+    legVis.Size = Vector3.new(legX*2, legY*2, legZ*2)
+    legVis.Shape = Enum.PartType.Block
+end
+if armShow and armVis and #arms > 0 and hrp then
+    local sum = Vector3.new()
+    for _,a in arms do sum = sum + a.Position end
+    local center = sum / #arms
+    local offset = hrp.CFrame:PointToObjectSpace(center)
+    armVis.CFrame = hrp.CFrame * CFrame.new(offset)
+    armVis.Size = Vector3.new(armX*2, armY*2, armZ*2)
+    armVis.Shape = Enum.PartType.Block
+end
+if headShow and headVis and headPart then
+    headVis.CFrame = headPart.CFrame
+    headVis.Size = Vector3.new(headSize * 2, headSize * 2, headSize * 2)
+    headVis.Shape = Enum.PartType.Ball
+end
+if ballShow then
+    for b, vis in pairs(ballVisors) do
+        if b and b.Parent then
+            vis.CFrame = b.CFrame
+            vis.Size = Vector3.new(ballSize*2, ballSize*2, ballSize*2)
+        else
+            vis:Destroy()
+            ballVisors[b] = nil
+        end
+    end
+end
+
+for _, ball in ballList do
+    if not ball or not ball.Parent then continue end
+    local pos = ball.Position
+    if legOn and #legs > 0 then
+        for _, l in legs do
+            local delta = pos - l.Position
+            if math.abs(delta.X) <= legX and math.abs(delta.Y) <= legY and math.abs(delta.Z) <= legZ then
+                firetouchinterest(ball, l, 0)
+                firetouchinterest(ball, l, 1)
+            end
+        end
+    end
+    if armOn and #arms > 0 then
+        for _, a in arms do
+            local delta = pos - a.Position
+            if math.abs(delta.X) <= armX and math.abs(delta.Y) <= armY and math.abs(delta.Z) <= armZ then
+                firetouchinterest(ball, a, 0)
+                firetouchinterest(ball, a, 1)
+            end
+        end
+    end
+    if headOn and headPart and (pos - headPart.Position).Magnitude <= headSize then
+        firetouchinterest(ball, headPart, 0)
+        firetouchinterest(ball, headPart, 1)
+    end
+    if ballOn and ball.Name == "TPS" and #legs > 0 then
+        for _, l in legs do
+            if (pos - l.Position).Magnitude <= ballSize then
+                firetouchinterest(ball, l, 0)
+                firetouchinterest(ball, l, 1)
+            end
+        end
+    end
+end
+
+if reachEnabled or khalidReachEnabled then
+local char = LocalPlayer.Character
+local root = char and char:FindFirstChild("HumanoidRootPart")
+local hum = char and char:FindFirstChild("Humanoid")
+local ball = workspace:FindFirstChild("TPS") or (workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS"))
+
+if root and ball and hum then
+local rel = root.CFrame:PointToObjectSpace(ball.Position)
+local isAir = hum.FloorMaterial == Enum.Material.Air
+
+local useKhalid = khalidReachEnabled
+local currG_REACH = useKhalid and khalidG_REACH or G_REACH
+local currJ_REACH = useKhalid and khalidJ_REACH or J_REACH
+local currAIR_X = useKhalid and khalidAIR_X or AIR_X
+local currAIR_Y = useKhalid and khalidAIR_Y or AIR_Y
+local currAIR_Z = useKhalid and khalidAIR_Z or AIR_Z
+local currVelPower = useKhalid and khalidVelPower or 135
+local currVelHeight = useKhalid and khalidVelHeight or 8
+
+if isAir then
+    if (math.abs(rel.X) <= currAIR_X and rel.Y <= currAIR_Y and rel.Y >= -1.5 and math.abs(rel.Z) <= currAIR_Z) or (ball.Position - root.Position).Magnitude <= currJ_REACH then
+        firetouchinterest(ball, root, 0)
+        firetouchinterest(ball, root, 1)
+        ball.AssemblyLinearVelocity = (Camera.CFrame.LookVector * currVelPower) + Vector3.new(0, currVelHeight, 0)
+    end
+else
+    if (ball.Position - root.Position).Magnitude <= currG_REACH then
+        firetouchinterest(ball, root, 0)
+        firetouchinterest(ball, root, 1)
+        ball.AssemblyLinearVelocity = (Camera.CFrame.LookVector * currVelPower) + Vector3.new(0, currVelHeight, 0)
+    end
+end
+end
+end
+end)
+
+UIS.InputBegan:Connect(function(input, gpe)
+if gpe then return end
+
+if input.KeyCode == autoInfFastKey then
+    if autoInfFastToggleEnabled then
+        autoFollowEnabled = not autoFollowEnabled
+    end
+end
+
+if input.KeyCode == zzzHelperKey then
+    if zzzHelperToggleEnabled then
+        zzzHelperEnabled = not zzzHelperEnabled
+        updateZZZHelper(zzzHelperEnabled)
+    end
+end
+
+if input.KeyCode == airDribbleKey then
+    if airDribbleHelperToggleEnabled then
+        airDribbleEnabled = not airDribbleEnabled
+    end
+end
+end)
+
+RunService.Heartbeat:Connect(function()
+if autoFollowEnabled and player.Character then
+local hum = player.Character:FindFirstChildOfClass("Humanoid")
+if hum then
+local tpsSystem = Workspace:FindFirstChild("TPSSystem")
+if tpsSystem then
+local ball = tpsSystem:FindFirstChild("TPS")
+if ball and ball:IsA("BasePart") then
+hum:MoveTo(ball.Position)
+end
+end
+end
+end
+end)
+
+local solaraEnabled = false
+local leftLegEnabled = false
+local rightLegEnabled = false
+local leftReachX, leftReachZ = 1, 1
+local rightReachX, rightReachZ = 1, 1
+local visualTransparency = 0
+local fakeLeftLeg, fakeRightLeg = nil, nil
+local headReachEnabled = false
+local headReachX, headReachY, headReachZ = 2, 2, 2
+local originalHeadSize = nil
+local headVisSolara = nil
+
+local function makeVisualizer(color)
+local p = Instance.new("Part")
+p.Anchored = true
+p.CanCollide = false
+p.Transparency = 0.65
+p.Material = Enum.Material.ForceField
+p.Color = color
+p.Shape = Enum.PartType.Block
+p.Size = Vector3.new(1,1,1)
+p.Parent = Workspace
+return p
+end
+
+local function applySolaraChanges()
+local char = player.Character
+if not char or char:FindFirstChild("Humanoid").RigType ~= Enum.HumanoidRigType.R6 then return end
+local head = char:FindFirstChild("Head")
+if not head then return end
+local hum = char:FindFirstChildOfClass("Humanoid")
+if not hum then return end
+if not originalHeadSize then originalHeadSize = head.Size end
+if solaraEnabled then
+local realLeft = char:FindFirstChild("Left Leg")
+local realRight = char:FindFirstChild("Right Leg")
+if not realLeft or not realRight then return end
+if leftLegEnabled then
+realLeft.Size = Vector3.new(leftReachX, 2, leftReachZ)
+end
+if rightLegEnabled then
+realRight.Size = Vector3.new(rightReachX, 2, rightReachZ)
+end
+realLeft.Transparency = 1
+realRight.Transparency = 1
+realLeft.CanCollide = false
+realRight.CanCollide = false
+realLeft.Massless = true
+realRight.Massless = true
+if leftLegEnabled then
+fakeLeftLeg = Instance.new("Part")
+fakeLeftLeg.Name = "Left Leg"
+fakeLeftLeg.Size = Vector3.new(1, 2, 1)
+fakeLeftLeg.Color = realLeft.Color
+fakeLeftLeg.Transparency = visualTransparency
+fakeLeftLeg.CanCollide = false
+fakeLeftLeg.Massless = true
+fakeLeftLeg.CFrame = realLeft.CFrame
+fakeLeftLeg.Parent = char
+local weldL = Instance.new("WeldConstraint", realLeft)
+weldL.Part0 = realLeft
+weldL.Part1 = fakeLeftLeg
+local leftAtt = Instance.new("Attachment", realLeft)
+leftAtt.Name = "LeftFootAttachment"
+leftAtt.Position = Vector3.new(0, -1, 0)
+end
+if rightLegEnabled then
+fakeRightLeg = Instance.new("Part")
+fakeRightLeg.Name = "Right Leg"
+fakeRightLeg.Size = Vector3.new(1, 2, 1)
+fakeRightLeg.Color = realRight.Color
+fakeRightLeg.Transparency = visualTransparency
+fakeRightLeg.CanCollide = false
+fakeRightLeg.Massless = true
+fakeRightLeg.CFrame = realRight.CFrame
+fakeRightLeg.Parent = char
+local weldR = Instance.new("WeldConstraint", realRight)
+weldR.Part0 = realRight
+weldR.Part1 = fakeRightLeg
+local rightAtt = Instance.new("Attachment", realRight)
+rightAtt.Name = "RightFootAttachment"
+rightAtt.Position = Vector3.new(0, -1, 0)
+end
+end
+if headReachEnabled then
+head.Size = Vector3.new(headReachX, headReachY, headReachZ)
+head.CanCollide = false
+head.Massless = true
+end
+task.wait(0.5)
+if solaraEnabled or headReachEnabled then
+hum:ApplyDescription(hum:GetAppliedDescription())
+end
+end
+
+local function resetSolaraChanges()
+local char = player.Character
+if not char then return end
+local head = char:FindFirstChild("Head")
+local realLeft = char:FindFirstChild("Left Leg")
+local realRight = char:FindFirstChild("Right Leg")
+if realLeft then
+realLeft.Size = Vector3.new(1,2,1)
+realLeft.Transparency = 0
+realLeft.CanCollide = true
+realLeft.Massless = false
+end
+if realRight then
+realRight.Size = Vector3.new(1,2,1)
+realRight.Transparency = 0
+realRight.CanCollide = true
+realRight.Massless = false
+end
+if head and originalHeadSize then
+head.Size = originalHeadSize
+head.CanCollide = true
+head.Massless = false
+end
+if fakeLeftLeg then fakeLeftLeg:Destroy() end
+if fakeRightLeg then fakeRightLeg:Destroy() end
+fakeLeftLeg, fakeRightLeg = nil, nil
+originalHeadSize = nil
+end
+
+if isTPSLike and isSupportedExecutor then
+if SolaraLegTab then
+CreateToggle(SolaraLegTab, "Enable R6 Leg Reach", function(enabled)
+solaraEnabled = enabled
+resetSolaraChanges()
+if enabled then applySolaraChanges() end
+end)
+CreateToggle(SolaraLegTab, "Left Leg Reach", function(enabled
