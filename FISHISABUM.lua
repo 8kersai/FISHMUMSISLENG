@@ -69,7 +69,7 @@ local messages = {
 "LOADING...",
 "LOADING BYPASS...",
 "SUCCESSFULLY INITIALIZED",
-"ENJOY Cezar Hub."
+"ENJOY NEXUS PREMIUM."
 }
 for _, msg in ipairs(messages) do
 status.Text = msg
@@ -173,7 +173,7 @@ end
 end
 
 local UI = Instance.new("ScreenGui")
-UI.Name = "CezarHub"
+UI.Name = "KyroMPS"
 UI.ResetOnSpawn = false
 UI.Parent = CoreGui
 
@@ -186,7 +186,7 @@ FloatButton.Size = UDim2.new(0, 60, 0, 60)
 FloatButton.AnchorPoint = Vector2.new(1, 0)
 FloatButton.Position = UDim2.new(1, -10, 0, 10)
 FloatButton.BackgroundColor3 = Color3.new(0, 0, 0)
-FloatButton.Text = "Cezar"
+FloatButton.Text = "NEXUS"
 FloatButton.TextColor3 = Color3.new(1, 1, 1)
 FloatButton.Font = Enum.Font.GothamBlack
 FloatButton.TextSize = 20
@@ -218,7 +218,7 @@ Title.Size = UDim2.new(0,0,0,40)
 Title.Position = UDim2.new(0.5, 0, 0, 4)
 Title.AnchorPoint = Vector2.new(0.5, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "Cezar Hub"
+Title.Text = "NEXUS"
 Title.TextColor3 = MAIN_COLOR
 Title.Font = Enum.Font.GothamBlack
 Title.TextSize = 20
@@ -457,6 +457,11 @@ local HeadReachTab = nil
 local ReactTab = nil
 local PlayerTab = nil
 local HeadTab = nil
+local KhalidTab = AddTab("Khalid")
+local GoalkeeperReactTab = AddTab("Goalkeeper React")
+local ReactPercentTab = AddTab("React Percentages")
+local ReachTab = AddTab("Reach")
+local MiscellaneousTab = AddTab("Miscellaneous")
 
 if isTPSLike and isSupportedExecutor then
 SolaraLegTab = AddTab("R6 Leg Reach")
@@ -471,11 +476,6 @@ HeadTab = AddTab("Head Reach")
 if isTPSLike then ReactTab = AddTab("React") end
 PlayerTab = AddTab("Player")
 end
-
-local KhalidTab = AddTab("Khalid")
-local GoalkeeperReactTab = AddTab("Goalkeeper React")
-local ReactPercentTab = AddTab("React Percentages")
-local ReachTab = AddTab("Reach XYZ")
 
 TabButtons[1].TextColor3 = Color3.fromRGB(200,200,220)
 if TabButtons[1]:FindFirstChildOfClass("UIStroke") then
@@ -638,6 +638,22 @@ UIS.InputEnded:Connect(function(i)
 end)
 end
 
+local autoInfFastKey = Enum.KeyCode.E
+local autoInfFastToggleEnabled = false
+local autoFollowEnabled = false
+
+local zzzHelperKey = Enum.KeyCode.G
+local zzzHelperToggleEnabled = false
+local zzzHelperEnabled = false
+local zzzMarker = nil
+local originalBallSize = nil
+
+local airDribbleKey = Enum.KeyCode.K
+local airDribbleHelperToggleEnabled = false
+local airDribbleEnabled = false
+local airDribblePart = nil
+local airDribbleSize = 4.5
+
 local function CreateKeybindButton(parent, currentKey, labelText, onChange)
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(1, -20, 0, 32)
@@ -675,26 +691,6 @@ btn.MouseButton1Click:Connect(function()
     end)
 end)
 return frame
-end
-
-local function CreateButton(parent, text, callback)
-local f = Instance.new("Frame")
-f.Size = UDim2.new(1,-20,0,32)
-f.BackgroundColor3 = Color3.fromRGB(18,18,18)
-f.BackgroundTransparency = 0.2
-f.Parent = parent
-Instance.new("UICorner", f).CornerRadius = UDim.new(0,8)
-
-local b = Instance.new("TextButton")
-b.Size = UDim2.new(1,0,1,0)
-b.BackgroundTransparency = 1
-b.Text = text
-b.TextColor3 = Color3.new(1,1,1)
-b.Font = Enum.Font.GothamSemibold
-b.TextSize = 14
-b.Parent = f
-b.MouseButton1Click:Connect(callback)
-return f
 end
 
 local ballList = {}
@@ -778,39 +774,6 @@ local midfielderReactOn = false
 local defenderReactOn = false
 local gkReactOn = false
 local currentHook = nil
-
-local betterReactX = 250
-local betterReactY = 250
-local betterReactZ = 250
-local opReactX = 400
-local opReactY = 0
-local opReactZ = 400
-
-local G_REACH = 4
-local J_REACH = 5
-local AIR_X = 3.5
-local AIR_Y = 5
-local AIR_Z = 3
-local reachEnabled = false
-
-local khalidG_REACH = 4
-local khalidJ_REACH = 5
-local khalidAIR_X = 3.5
-local khalidAIR_Y = 5
-local khalidAIR_Z = 3
-local khalidVelPower = 135
-local khalidVelHeight = 8
-local khalidReachEnabled = false
-
-local baseG_REACH = 4
-local baseJ_REACH = 5
-local baseAIR_X = 3.5
-local baseAIR_Y = 5
-local baseAIR_Z = 3
-local baseVelPower = 135
-local baseVelHeight = 8
-
-local Camera = workspace.CurrentCamera
 
 local function removeHook()
 if currentHook then
@@ -1130,10 +1093,7 @@ midfielderReactOn = false
 gkReactOn = false
 end
 end)
-end
-
-if GoalkeeperReactTab then
-CreateToggle(GoalkeeperReactTab, "GK React", function(on)
+CreateToggle(ReactTab, "GK React", function(on)
 gkReactOn = on
 if on then
 removeHook()
@@ -1165,95 +1125,6 @@ end
 end)
 end
 
-if ReactPercentTab then
-CreateSlider(ReactPercentTab, "Better React X", 0, 500, 250, 10, function(v) betterReactX = v end)
-CreateSlider(ReactPercentTab, "Better React Y", 0, 500, 250, 10, function(v) betterReactY = v end)
-CreateSlider(ReactPercentTab, "Better React Z", 0, 500, 250, 10, function(v) betterReactZ = v end)
-CreateSlider(ReactPercentTab, "OP React X", 0, 500, 400, 10, function(v) opReactX = v end)
-CreateSlider(ReactPercentTab, "OP React Y", 0, 500, 0, 10, function(v) opReactY = v end)
-CreateSlider(ReactPercentTab, "OP React Z", 0, 500, 400, 10, function(v) opReactZ = v end)
-end
-
-if ReachTab then
-CreateToggle(ReachTab, "Enable Reach", function(v) reachEnabled = v end)
-CreateSlider(ReachTab, "Ground Reach", 0, 20, 4, 0.5, function(v) G_REACH = v end)
-CreateSlider(ReachTab, "Jump Reach", 0, 20, 5, 0.5, function(v) J_REACH = v end)
-CreateSlider(ReachTab, "Air X", 0, 20, 3.5, 0.5, function(v) AIR_X = v end)
-CreateSlider(ReachTab, "Air Y", 0, 20, 5, 0.5, function(v) AIR_Y = v end)
-CreateSlider(ReachTab, "Air Z", 0, 20, 3, 0.5, function(v) AIR_Z = v end)
-end
-
-if KhalidTab then
-CreateToggle(KhalidTab, "Enable Khalid Reach", function(v) khalidReachEnabled = v end)
-CreateSlider(KhalidTab, "Ground Reach", 0, 20, 4, 0.5, function(v) khalidG_REACH = v end)
-CreateSlider(KhalidTab, "Jump Reach", 0, 20, 5, 0.5, function(v) khalidJ_REACH = v end)
-CreateSlider(KhalidTab, "Air X", 0, 20, 3.5, 0.5, function(v) khalidAIR_X = v end)
-CreateSlider(KhalidTab, "Air Y", 0, 20, 5, 0.5, function(v) khalidAIR_Y = v end)
-CreateSlider(KhalidTab, "Air Z", 0, 20, 3, 0.5, function(v) khalidAIR_Z = v end)
-CreateSlider(KhalidTab, "Velocity Power", 50, 300, 135, 5, function(v) khalidVelPower = v end)
-CreateSlider(KhalidTab, "Velocity Height", 0, 20, 8, 1, function(v) khalidVelHeight = v end)
-
-CreateButton(KhalidTab, "Buff by 20%", function()
-khalidG_REACH = khalidG_REACH * 1.2
-khalidJ_REACH = khalidJ_REACH * 1.2
-khalidAIR_X = khalidAIR_X * 1.2
-khalidAIR_Y = khalidAIR_Y * 1.2
-khalidAIR_Z = khalidAIR_Z * 1.2
-khalidVelPower = khalidVelPower * 1.2
-khalidVelHeight = khalidVelHeight * 1.2
-end)
-
-CreateButton(KhalidTab, "Set 15%", function()
-khalidG_REACH = baseG_REACH * 1.15
-khalidJ_REACH = baseJ_REACH * 1.15
-khalidAIR_X = baseAIR_X * 1.15
-khalidAIR_Y = baseAIR_Y * 1.15
-khalidAIR_Z = baseAIR_Z * 1.15
-khalidVelPower = baseVelPower * 1.15
-khalidVelHeight = baseVelHeight * 1.15
-end)
-
-CreateButton(KhalidTab, "Set 25%", function()
-khalidG_REACH = baseG_REACH * 1.25
-khalidJ_REACH = baseJ_REACH * 1.25
-khalidAIR_X = baseAIR_X * 1.25
-khalidAIR_Y = baseAIR_Y * 1.25
-khalidAIR_Z = baseAIR_Z * 1.25
-khalidVelPower = baseVelPower * 1.25
-khalidVelHeight = baseVelHeight * 1.25
-end)
-
-CreateButton(KhalidTab, "Set 50%", function()
-khalidG_REACH = baseG_REACH * 1.5
-khalidJ_REACH = baseJ_REACH * 1.5
-khalidAIR_X = baseAIR_X * 1.5
-khalidAIR_Y = baseAIR_Y * 1.5
-khalidAIR_Z = baseAIR_Z * 1.5
-khalidVelPower = baseVelPower * 1.5
-khalidVelHeight = baseVelHeight * 1.5
-end)
-
-CreateButton(KhalidTab, "Set 75%", function()
-khalidG_REACH = baseG_REACH * 1.75
-khalidJ_REACH = baseJ_REACH * 1.75
-khalidAIR_X = baseAIR_X * 1.75
-khalidAIR_Y = baseAIR_Y * 1.75
-khalidAIR_Z = baseAIR_Z * 1.75
-khalidVelPower = baseVelPower * 1.75
-khalidVelHeight = baseVelHeight * 1.75
-end)
-
-CreateButton(KhalidTab, "Set 100%", function()
-khalidG_REACH = baseG_REACH * 2
-khalidJ_REACH = baseJ_REACH * 2
-khalidAIR_X = baseAIR_X * 2
-khalidAIR_Y = baseAIR_Y * 2
-khalidAIR_Z = baseAIR_Z * 2
-khalidVelPower = baseVelPower * 2
-khalidVelHeight = baseVelHeight * 2
-end)
-end
-
 RunService.Heartbeat:Connect(function()
 local connected = false
 local TPSSystem = Workspace:FindFirstChild("TPSSystem")
@@ -1272,9 +1143,9 @@ if TPSSystem then
     local Ball = TPSSystem:FindFirstChild("TPS")
     if Ball and Ball:IsA("BasePart") then
         if betterReactOn then
-            Ball.Velocity = Vector3.new(betterReactX, betterReactY, betterReactZ)
+            Ball.Velocity = Vector3.new(250, 250, 250)
         elseif opReactOn then
-            Ball.Velocity = Vector3.new(opReactX, opReactY, opReactZ)
+            Ball.Velocity = Vector3.new(400, 0, 400)
         end
     end
 end
@@ -1348,41 +1219,6 @@ for _, ball in ballList do
             end
         end
     end
-end
-
-if reachEnabled or khalidReachEnabled then
-local char = LocalPlayer.Character
-local root = char and char:FindFirstChild("HumanoidRootPart")
-local hum = char and char:FindFirstChild("Humanoid")
-local ball = workspace:FindFirstChild("TPS") or (workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS"))
-
-if root and ball and hum then
-local rel = root.CFrame:PointToObjectSpace(ball.Position)
-local isAir = hum.FloorMaterial == Enum.Material.Air
-
-local useKhalid = khalidReachEnabled
-local currG_REACH = useKhalid and khalidG_REACH or G_REACH
-local currJ_REACH = useKhalid and khalidJ_REACH or J_REACH
-local currAIR_X = useKhalid and khalidAIR_X or AIR_X
-local currAIR_Y = useKhalid and khalidAIR_Y or AIR_Y
-local currAIR_Z = useKhalid and khalidAIR_Z or AIR_Z
-local currVelPower = useKhalid and khalidVelPower or 135
-local currVelHeight = useKhalid and khalidVelHeight or 8
-
-if isAir then
-    if (math.abs(rel.X) <= currAIR_X and rel.Y <= currAIR_Y and rel.Y >= -1.5 and math.abs(rel.Z) <= currAIR_Z) or (ball.Position - root.Position).Magnitude <= currJ_REACH then
-        firetouchinterest(ball, root, 0)
-        firetouchinterest(ball, root, 1)
-        ball.AssemblyLinearVelocity = (Camera.CFrame.LookVector * currVelPower) + Vector3.new(0, currVelHeight, 0)
-    end
-else
-    if (ball.Position - root.Position).Magnitude <= currG_REACH then
-        firetouchinterest(ball, root, 0)
-        firetouchinterest(ball, root, 1)
-        ball.AssemblyLinearVelocity = (Camera.CFrame.LookVector * currVelPower) + Vector3.new(0, currVelHeight, 0)
-    end
-end
-end
 end
 end)
 
@@ -1555,4 +1391,189 @@ solaraEnabled = enabled
 resetSolaraChanges()
 if enabled then applySolaraChanges() end
 end)
-CreateToggle(SolaraLegTab, "Left Leg Reach", function(enabled
+CreateToggle(SolaraLegTab, "Left Leg Reach", function(enabled)
+leftLegEnabled = enabled
+resetSolaraChanges()
+if solaraEnabled then applySolaraChanges() end
+end)
+CreateSlider(SolaraLegTab, "Left Reach X", 1, 20, 1, 1, function(v)
+leftReachX = v
+resetSolaraChanges()
+if solaraEnabled then applySolaraChanges() end
+end)
+CreateSlider(SolaraLegTab, "Left Reach Z", 1, 20, 1, 1, function(v)
+leftReachZ = v
+resetSolaraChanges()
+if solaraEnabled then applySolaraChanges() end
+end)
+CreateToggle(SolaraLegTab, "Right Leg Reach", function(enabled)
+rightLegEnabled = enabled
+resetSolaraChanges()
+if solaraEnabled then applySolaraChanges() end
+end)
+CreateSlider(SolaraLegTab, "Right Reach X", 1, 20, 1, 1, function(v)
+rightReachX = v
+resetSolaraChanges()
+if solaraEnabled then applySolaraChanges() end
+end)
+CreateSlider(SolaraLegTab, "Right Reach Z", 1, 20, 1, 1, function(v)
+rightReachZ = v
+resetSolaraChanges()
+if solaraEnabled then applySolaraChanges() end
+end)
+CreateSlider(SolaraLegTab, "Visual Legs Transparency", 0, 1, 0, 0.05, function(v)
+visualTransparency = v
+if fakeLeftLeg then fakeLeftLeg.Transparency = v end
+if fakeRightLeg then fakeRightLeg.Transparency = v end
+end)
+local resetBtn = Instance.new("TextButton")
+resetBtn.Size = UDim2.new(1,-20,0,40)
+resetBtn.BackgroundColor3 = MAIN_COLOR
+resetBtn.Text = "Reset All Reach"
+resetBtn.TextColor3 = Color3.new(1,1,1)
+resetBtn.Font = Enum.Font.GothamBold
+resetBtn.TextSize = 15
+resetBtn.Parent = SolaraLegTab
+Instance.new("UICorner", resetBtn).CornerRadius = UDim.new(0,8)
+resetBtn.MouseButton1Click:Connect(function()
+resetSolaraChanges()
+if solaraEnabled then applySolaraChanges() end
+end)
+end
+if HeadReachTab then
+CreateToggle(HeadReachTab, "Head Reach Enabled", function(v)
+headReachEnabled = v
+resetSolaraChanges()
+if v then applySolaraChanges() end
+end)
+CreateSlider(HeadReachTab, "Head X Size", 1, 6, 2, 0.1, function(v)
+headReachX = v
+resetSolaraChanges()
+if headReachEnabled then applySolaraChanges() end
+end)
+CreateSlider(HeadReachTab, "Head Y Size", 1, 6, 2, 0.1, function(v)
+headReachY = v
+resetSolaraChanges()
+if headReachEnabled then applySolaraChanges() end
+end)
+CreateSlider(HeadReachTab, "Head Z Size", 1, 6, 2, 0.1, function(v)
+headReachZ = v
+resetSolaraChanges()
+if headReachEnabled then applySolaraChanges() end
+end)
+CreateToggle(HeadReachTab, "Head Visualizer", function(v)
+if v and not headVisSolara then
+headVisSolara = makeVisualizer(Color3.fromRGB(255,80,80))
+elseif not v and headVisSolara then
+headVisSolara:Destroy()
+headVisSolara = nil
+end
+end)
+end
+player.CharacterAdded:Connect(function(newChar)
+task.wait(3)
+if solaraEnabled or headReachEnabled then applySolaraChanges() end
+end)
+end
+
+if not (isTPSLike and isSupportedExecutor) then
+if LegTab then
+CreateToggle(LegTab, "Leg Reach Enabled", function(v) legOn = v end)
+CreateSlider(LegTab, "Leg X Reach", 0, 15, 3.5, 0.1, function(v) legX = v end)
+CreateSlider(LegTab, "Leg Y Reach", 0, 15, 3.5, 0.1, function(v) legY = v end)
+CreateSlider(LegTab, "Leg Z Reach", 0, 15, 3.5, 0.1, function(v) legZ = v end)
+CreateToggle(LegTab, "Leg Visualizer", function(v)
+legShow = v
+if v and not legVis then
+legVis = makeVis(MAIN_COLOR)
+elseif not v and legVis then
+legVis:Destroy()
+legVis = nil
+end
+end)
+end
+if ArmTab then
+CreateToggle(ArmTab, "Arm Reach Enabled", function(v) armOn = v end)
+CreateSlider(ArmTab, "Arm X Reach", 0, 8, 3.5, 0.1, function(v) armX = v end)
+CreateSlider(ArmTab, "Arm Y Reach", 0, 8, 3.5, 0.1, function(v) armY = v end)
+CreateSlider(ArmTab, "Arm Z Reach", 0, 8, 3.5, 0.1, function(v) armZ = v end)
+CreateToggle(ArmTab, "Arm Visualizer", function(v)
+armShow = v
+if v and not armVis then
+armVis = makeVis(Color3.fromRGB(255,170,0))
+elseif not v and armVis then
+armVis:Destroy()
+armVis = nil
+end
+end)
+end
+if HeadTab then
+CreateToggle(HeadTab, "Head Reach Enabled", function(v) headOn = v end)
+CreateSlider(HeadTab, "Head Reach Size", 1, 5, 3.5, 0.25, function(v) headSize = v end)
+CreateToggle(HeadTab, "Head Visualizer", function(v)
+headShow = v
+if v and not headVis then
+headVis = makeVis(Color3.fromRGB(255,80,80))
+elseif not v and headVis then
+headVis:Destroy()
+headVis = nil
+end
+end)
+end
+if BallTab then
+CreateToggle(BallTab, "Ball Reach Enabled", function(v) ballOn = v end)
+CreateSlider(BallTab, "Ball Reach Size", 0, 15, 3.5, 0.1, function(v) ballSize = v end)
+CreateToggle(BallTab, "Ball Visualizer", function(v)
+ballShow = v
+if v then
+for _, b in ballList do
+if b.Name == "TPS" then
+ballVisors[b] = makeVis(MAIN_COLOR)
+end
+end
+else
+for _, vis in ballVisors do vis:Destroy() end
+ballVisors = {}
+end
+end)
+end
+end
+
+if player.Character and isTPSLike and isSupportedExecutor then
+applySolaraChanges()
+end
+
+task.spawn(function()
+if not isRealTPS then
+return
+end
+
+local a = workspace.FE.Actions
+if a:FindFirstChild("KeepYourHeadUp_") then
+    a.KeepYourHeadUp_:Destroy()
+    local r = Instance.new("RemoteEvent")
+    r.Name = "KeepYourHeadUp_"
+    r.Parent = a
+else
+    game.Players.LocalPlayer:Kick("Anti-Cheat Updated! Send a photo of this Message in our Discord Server or alert a developer so we can fix it.")
+end
+end)
+
+if MiscellaneousTab then
+CreateSlider(MiscellaneousTab, "Header X", 1, 6, 2, 0.1, function(v)
+headReachX = v
+resetSolaraChanges()
+if headReachEnabled or solaraEnabled then applySolaraChanges() end
+end)
+CreateSlider(MiscellaneousTab, "Header Y", 1, 6, 2, 0.1, function(v)
+headReachY = v
+resetSolaraChanges()
+if headReachEnabled or solaraEnabled then applySolaraChanges() end
+end)
+CreateSlider(MiscellaneousTab, "Header Z", 1, 6, 2, 0.1, function(v)
+headReachZ = v
+resetSolaraChanges()
+if headReachEnabled or solaraEnabled then applySolaraChanges() end
+end)
+end
+end)
