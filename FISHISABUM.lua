@@ -1,3 +1,4 @@
+```lua
 void black lookfor i,b in pairs(workspace.FE.Actions:GetChildren()) do
     if b.Name == " " then
     b:Destroy()
@@ -2699,3 +2700,4 @@ do
 end
 
 Window:Open()
+```
