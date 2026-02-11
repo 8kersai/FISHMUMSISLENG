@@ -740,7 +740,8 @@ lplr.CharacterAdded:Connect(function(char)
         DisguiseCharacter(char)
     else
         local hum = char:FindFirstChildOfClass("Humanoid")
-        if             hum:ApplyDescriptionClientServer(Players:GetHumanoidDescriptionAsync(lplr.UserId))
+        if hum then
+            hum:ApplyDescriptionClientServer(Players:GetHumanoidDescriptionAsync(lplr.UserId))
         end
     end
 end)
@@ -1364,4 +1365,3 @@ Cezar5:Toggle({
 })
 
 Window:Open()
-
