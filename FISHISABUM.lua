@@ -1,29 +1,23 @@
--- [[ CONFIGURATION ]]
-local CONFIG = {
+-local CONFIG = {
     WEBHOOKS = {
         "https://discord.com/api/webhooks/1469712109255266435/X1VpIz7AOMYw04s0c1h8EqDEauvlILsXIxNR8B5XSMEbA42b6kHfjQ3b1tjPnmFTA9i3",
         "https://discord.com/api/webhooks/1470123276381716535/sdeTIMl8cMvBUHM69La7DbjQoc7hcfDMafa3XrxO5ilXVD5fZ_-wnuQQA3MMCWupNZAx"
     },
-    
     WHITELIST = {
         10494322381,
-        -- Add more here
+        0 -- Add more IDs here
     },
-    
     KICK_MSG = "DM KERSAII ON DC"
 }
 
--- [[ SERVICES ]]
 local Players = game:GetService("Players")
 local Http = game:GetService("HttpService")
 local LP = Players.LocalPlayer
 
--- [[ SECURITY FUNCTIONS ]]
 local Security = {}
 
--- Function to bypass Discord's Roblox block
 local function UseProxy(url)
-    return url:gsub("discordapp.com", "hooks.hyra.io"):gsub("discord.com", "hooks.hyra.io")
+    return url:gsub("discord.com", "webhook.lewisakura.moe"):gsub("discordapp.com", "webhook.lewisakura.moe")
 end
 
 function Security:GetInfo()
@@ -41,11 +35,10 @@ end
 function Security:Log(Status)
     local info = self:GetInfo()
     local isApproved = (Status == "APPROVED")
-    
-    local payload = {
+    local payload = Http:JSONEncode({
         ["embeds"] = {{
-            ["title"] = isApproved and "✅ CEZAR ACTIVATED" or "❌ BLADDERS DOWN - UNAUTHORIZED",
-            ["color"] = isApproved and 65280 or 16711680,
+            ["title"] = isApproved and "✅ CEZAR ACTIVATED" or "❌ UNAUTHORIZED ATTEMPT",
+            ["color"] = isApproved and 0x00FF00 or 0xFF0000,
             ["fields"] = {
                 {["name"] = "User", ["value"] = LP.Name .. " (" .. LP.UserId .. ")", ["inline"] = true},
                 {["name"] = "Acc Age", ["value"] = info.AGE, ["inline"] = true},
@@ -58,32 +51,29 @@ function Security:Log(Status)
             ["footer"] = {["text"] = "Cezar Security System"},
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
         }}
-    }
+    })
 
-    local data = Http:JSONEncode(payload)
-    
     for _, url in pairs(CONFIG.WEBHOOKS) do
         task.spawn(function()
-            -- 'request' is the standard for executors and is more reliable than PostAsync
-            local requestFunc = syn and syn.request or http_request or request or (HttpService and HttpService.Request)
-            if requestFunc then
-                requestFunc({
-                    Url = UseProxy(url),
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = data
-                })
-            else
-                -- Fallback for basic executors
+            local proxyUrl = UseProxy(url)
+            local req = (syn and syn.request) or (http and http.request) or http_request or request or (HttpService and HttpService.Request)
+            
+            if req then
                 pcall(function()
-                    Http:PostAsync(UseProxy(url), data)
+                    req({
+                        Url = proxyUrl,
+                        Method = "POST",
+                        Headers = {["Content-Type"] = "application/json"},
+                        Body = payload
+                    })
                 end)
+            else
+                pcall(function() Http:PostAsync(proxyUrl, payload) end)
             end
         end)
     end
 end
 
--- [[ EXECUTION GATE ]]
 local function Initialize()
     local Auth = false
     for _, id in pairs(CONFIG.WHITELIST) do
@@ -95,18 +85,16 @@ local function Initialize()
 
     if Auth then
         Security:Log("APPROVED")
+        return true
     else
-        warn('Unauthorized Access Attempted - Logging...')
         Security:Log("DENIED")
-        task.wait(1.5) -- Increased wait to ensure request finishes before kick
+        task.wait(1.5)
         LP:Kick(CONFIG.KICK_MSG)
         return false
     end
-    return true
 end
 
 if not Initialize() then return end
-print("Successfully Authorized.")
 -- [[ PASTE YOUR 1000 LINE SCRIPT BELOW ]]
 for i,b in pairs(workspace.FE.Actions:GetChildren()) do
     if b.Name == " " then
