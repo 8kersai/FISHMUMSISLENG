@@ -66,7 +66,7 @@ local Window = WindUI:CreateWindow({
 
     Topbar = {
         Height = 44,
-        ButtonsType = "Mac",
+        ButtonsType = "Windows", -- CHANGED FROM "Mac" TO "Windows" FOR X - □ BUTTONS
     },
 })
 
@@ -110,9 +110,10 @@ local GKReact = M:Tab({ Title = "GK React", Icon = "shield" })
 local Player = MI:Tab({ Title = "Player", Icon = "user-round-cog" })
 local Helpers = MI:Tab({ Title = "Helpers", Icon = "heart-handshake" })
 local BallMods = MI:Tab({ Title = "Ball Mods", Icon = "pencil-off" })
+local Teleport = MI:Tab({ Title = "Teleporting", Icon = "bird" })
 local Cezar5 = MI:Tab({ Title = "Cezar 5%", Icon = "star" })
 
--- ====================== REACH TAB (Fixed) ======================
+-- ====================== REACH TAB (Fixed Sliders) ======================
 local reachEnabled = false
 local reachDistance = 1
 local reachConnection = nil
@@ -163,12 +164,19 @@ Reach:Toggle({
     end
 })
 
+-- FIXED SLIDER SYNTAX
 Reach:Slider({
     Title = "Reach Distance",
-    Min = 1,
-    Max = 15,
-    Default = 1,
+    Desc = "The Size Of The Reach",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
     Step = 0.1,
+    Value = {
+        Min = 1,
+        Max = 15,
+        Default = 1,
+    },
     Callback = function(val)
         reachDistance = tonumber(val)
 
@@ -315,7 +323,7 @@ Reach:Button({
     end
 })
 
--- ====================== MOSS TAB (Fixed) ======================
+-- ====================== MOSS TAB (Fixed Sliders) ======================
 local player = game.Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
@@ -326,12 +334,6 @@ local headTransparency = 0.5
 local headOffset = Vector3.new(0, 0, 0)
 local headBoxPart
 local headConnection
-local usePercentage = false
-local percentageValue = 1
-
-local function getAdjustedSize(x, y, z)
-    return Vector3.new(x, y, z)
-end
 
 local function updateHeadOffset()
     headOffset = Vector3.new(headOffset.X, headReachSize.Y / 2.5, headOffset.Z)
@@ -390,13 +392,19 @@ Moss:Toggle({
     end
 })
 
--- FIXED SLIDERS
+-- FIXED SLIDER SYNTAX
 Moss:Slider({
     Title = "Header X",
-    Min = 0,
-    Max = 20,
-    Default = 2,
+    Desc = "",
+    IsTooltip = false,
+    IsTextbox = false,
+    Width = 200,
     Step = 0.1,
+    Value = {
+        Min = 0,
+        Max = 20,
+        Default = 2,
+    },
     Callback = function(val)
         headReachSize = Vector3.new(val, headReachSize.Y, headReachSize.Z)
         if headReachEnabled then
@@ -407,10 +415,16 @@ Moss:Slider({
 
 Moss:Slider({
     Title = "Header Y",
-    Min = 0,
-    Max = 20,
-    Default = 3,
+    Desc = "",
+    IsTooltip = false,
+    IsTextbox = false,
+    Width = 200,
     Step = 0.1,
+    Value = {
+        Min = 0,
+        Max = 20,
+        Default = 3,
+    },
     Callback = function(val)
         headReachSize = Vector3.new(headReachSize.X, val, headReachSize.Z)
         headOffset = Vector3.new(headOffset.X, val / 2.5, headOffset.Z)
@@ -422,10 +436,16 @@ Moss:Slider({
 
 Moss:Slider({
     Title = "Header Z",
-    Min = 0,
-    Max = 20,
-    Default = 2,
+    Desc = "",
+    IsTooltip = false,
+    IsTextbox = false,
+    Width = 200,
     Step = 0.1,
+    Value = {
+        Min = 0,
+        Max = 20,
+        Default = 2,
+    },
     Callback = function(val)
         headReachSize = Vector3.new(headReachSize.X, headReachSize.Y, val)
         if headReachEnabled then
@@ -485,10 +505,16 @@ Khalid:Toggle({
 
 Khalid:Slider({
     Title = "Jump Reach Distance",
-    Min = 1,
-    Max = 20,
-    Default = 5,
+    Desc = "Jump leg reach distance",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
     Step = 0.1,
+    Value = {
+        Min = 1,
+        Max = 20,
+        Default = 5,
+    },
     Callback = function(v) J_REACH = v end
 })
 
@@ -531,7 +557,7 @@ React:Button({ Title = "Reduce Ball Delay", Callback = function()
     if tps and tps:FindFirstChild("MainAttachment") then tps.MainAttachment:Destroy() end
 end })
 
--- ====================== GK REACT TAB (Fixed) ======================
+-- ====================== GK REACT TAB ======================
 local gkReactEnabled = false
 
 GKReact:Toggle({
@@ -571,6 +597,755 @@ for _, p in {15, 25, 50, 75, 100} do
     })
 end
 
+-- ====================== PLAYER TAB ======================
+Player:Section({ Title = "Walkspeed" })
+
+local WalkspeedEnabled = false
+local CurrentSpeed = 23 
+
+Player:Toggle({
+    Title = "Enable / Disable Walkspeed",
+    Default = false,
+    Callback = function(v)
+        WalkspeedEnabled = v
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChildOfClass("Humanoid") then
+            if v then
+                character:FindFirstChildOfClass("Humanoid").WalkSpeed = CurrentSpeed
+            else
+                character:FindFirstChildOfClass("Humanoid").WalkSpeed = 23 
+            end
+        end
+    end
+})
+
+Player:Slider({
+    Title = "Walkspeed Size",
+    Desc = "",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 1,
+    Value = {
+        Min = 23,
+        Max = 75,
+        Default = 23,
+    },
+    Callback = function(v)
+        CurrentSpeed = v
+        if WalkspeedEnabled then
+            local character = game.Players.LocalPlayer.Character
+            if character and character:FindFirstChildOfClass("Humanoid") then
+                character:FindFirstChildOfClass("Humanoid").WalkSpeed = v
+            end
+        end
+    end
+})
+
+Player:Section({ Title = "Jump Power" })
+
+local JumpEnabled = false
+local CurrentJump = 50 
+
+Player:Toggle({
+    Title = "Enable / Disable Jump Power",
+    Default = false,
+    Callback = function(v)
+        JumpEnabled = v
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChildOfClass("Humanoid") then
+            if v then
+                character:FindFirstChildOfClass("Humanoid").JumpPower = CurrentJump
+            else
+                character:FindFirstChildOfClass("Humanoid").JumpPower = 50 
+            end
+        end
+    end
+})
+
+Player:Slider({
+    Title = "Jump Power",
+    Desc = "",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 1,
+    Value = {
+        Min = 50,
+        Max = 120,
+        Default = 50,
+    },
+    Callback = function(v)
+        CurrentJump = v
+        if JumpEnabled then
+            local character = game.Players.LocalPlayer.Character
+            if character and character:FindFirstChildOfClass("Humanoid") then
+                character:FindFirstChildOfClass("Humanoid").JumpPower = v
+            end
+        end
+    end
+})
+
+Player:Section({ Title = "Avatar Stealer" })
+
+local Players = game:GetService("Players")
+local lplr = Players.LocalPlayer
+
+local Disguise = {Enabled = false}
+local DisguiseUsername = {Value = ""}
+local DisguiseDescription = nil
+
+local function RemoveOldParts(character)
+    for _, child in ipairs(character:GetChildren()) do
+        if child:IsA("Accessory") or child:IsA("Clothing") or child:IsA("ShirtGraphic") then
+            child:Destroy()
+        elseif child:IsA("BodyColors") then
+            child:Destroy()
+        end
+    end
+end
+
+local function FetchDisguiseDescription()
+    if DisguiseUsername.Value == "" then return end
+    local success
+    repeat
+        success = pcall(function()
+            local userId = Players:GetUserIdFromNameAsync(DisguiseUsername.Value)
+            DisguiseDescription = Players:GetHumanoidDescriptionFromUserId(userId)
+        end)
+        if not success then
+            task.wait(1)
+        end
+    until success or not Disguise.Enabled
+end
+
+local function DisguiseCharacter(char)
+    task.spawn(function()
+        if not char then return end
+        local hum = char:WaitForChild("Humanoid", 9e9)
+        RemoveOldParts(char)
+
+        if not DisguiseDescription then
+            FetchDisguiseDescription()
+        end
+
+        if Disguise.Enabled and DisguiseDescription then
+            hum:ApplyDescriptionClientServer(DisguiseDescription)
+        end
+    end)
+end
+
+lplr.CharacterAdded:Connect(function(char)
+    if Disguise.Enabled then
+        DisguiseCharacter(char)
+    else
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if             hum:ApplyDescriptionClientServer(Players:GetHumanoidDescriptionAsync(lplr.UserId))
+        end
+    end
+end)
+
+Player:Toggle({
+    Title = "Enable / Disable Avatar Stealer",
+    Default = false,
+    Callback = function(state)
+        Disguise.Enabled = state
+        if state and DisguiseUsername.Value ~= "" and lplr.Character then
+            DisguiseCharacter(lplr.Character)
+        elseif not state and lplr.Character then
+            local hum = lplr.Character:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum:ApplyDescriptionClientServer(Players:GetHumanoidDescriptionAsync(lplr.UserId))
+            end
+        end
+    end
+})
+
+Player:Input({
+    Title = "Avatar Stealer Username",
+    Desc = "Write user here.",
+    Value = "",
+    Type = "Input",
+    Placeholder = "Enter username...",
+    Callback = function(input)
+        DisguiseUsername.Value = input
+        if Disguise.Enabled and lplr.Character then
+            DisguiseCharacter(lplr.Character)
+        end
+    end
+})
+
+-- ====================== HELPERS TAB ======================
+Helpers:Section({ Title = "ZZZZ Helper" })
+
+local zzzzEnabled = false
+
+Helpers:Toggle({
+    Title = "Enable / Disable ZZZZ Helper",
+    Default = false,
+    Callback = function(state)
+        zzzzEnabled = state
+        if state then
+            local part = Instance.new("Part")
+            part.Name = "TPS1"
+            part.Size = Vector3.new(9, 0.1, 9)  
+            part.Anchored = true
+            part.BrickColor = BrickColor.new("Bright red")
+            part.Transparency = 1 
+            part.Parent = game.Workspace
+
+            local tpsSystem = game:GetService("Workspace"):FindFirstChild("TPSSystem")
+            local tpsTarget = tpsSystem and tpsSystem:FindFirstChild("TPS")
+
+            local function updatePartPosition()
+                if tpsTarget then
+                    part.Position = tpsTarget.Position - Vector3.new(0, 1, 0)
+                end
+            end
+
+            updatePartPosition()
+            local runService = game:GetService("RunService")
+            runService.RenderStepped:Connect(updatePartPosition)
+        else
+            for _, child in ipairs(game.Workspace:GetChildren()) do
+                if child.Name == "TPS1" then
+                    child:Destroy()
+                end
+            end
+        end
+    end
+})
+
+Helpers:Section({ Title = "Air Dribble Helper" })
+
+local airDribbleEnabled = false
+local airDribbleSize = 1
+
+Helpers:Toggle({
+    Title = "Enable / Disable Air Dribble Helper",
+    Default = false,
+    Callback = function(state)
+        airDribbleEnabled = state
+        if state then
+            local part = Instance.new("Part")
+            part.Name = "TPS"
+            part.Size = Vector3.new(airDribbleSize, 0.1, airDribbleSize)  
+            part.Anchored = true
+            part.BrickColor = BrickColor.new("Bright red")
+            part.Transparency = 1  
+            part.Parent = game.Workspace
+
+            local tpsSystem = game:GetService("Workspace"):FindFirstChild("TPSSystem")
+            local tpsTarget = tpsSystem and tpsSystem:FindFirstChild("TPS")
+
+            local function updatePartPosition()
+                if tpsTarget then
+                    part.Position = tpsTarget.Position - Vector3.new(0, 1, 0)
+                end
+            end
+
+            updatePartPosition()
+            local runService = game:GetService("RunService")
+            runService.RenderStepped:Connect(updatePartPosition)
+        else
+            for _, child in ipairs(game.Workspace:GetChildren()) do
+                if child.Name == "TPS" then
+                    child:Destroy()
+                end
+            end
+        end
+    end
+})
+
+Helpers:Slider({
+    Title = "Air Dribble Helper Size",
+    Desc = "The Size Of The Reach",
+    IsTooltip = true,
+    IsTextbox = false,
+    Width = 200,
+    Step = 0.1,
+    Value = {
+        Min = 1,
+        Max = 15,
+        Default = 1,
+    },
+    Callback = function(val)
+        airDribbleSize = val
+        if airDribbleEnabled then
+            for _, child in ipairs(game.Workspace:GetChildren()) do
+                if child.Name == "TPS" then
+                    child:Destroy()
+                end
+            end
+            
+            local part = Instance.new("Part")
+            part.Name = "TPS"
+            part.Size = Vector3.new(val, 0.1, val)  
+            part.Anchored = true
+            part.BrickColor = BrickColor.new("Bright red")
+            part.Transparency = 1  
+            part.Parent = game.Workspace
+
+            local tpsSystem = game:GetService("Workspace"):FindFirstChild("TPSSystem")
+            local tpsTarget = tpsSystem and tpsSystem:FindFirstChild("TPS")
+
+            local function updatePartPosition()
+                if tpsTarget then
+                    part.Position = tpsTarget.Position - Vector3.new(0, 1, 0)
+                end
+            end
+
+            updatePartPosition()
+            local runService = game:GetService("RunService")
+            runService.RenderStepped:Connect(updatePartPosition)
+        end
+    end
+})
+
+Helpers:Section({ Title = "Inf Dribble Helper" })
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local ball = game.Workspace.TPSSystem.TPS
+local userInputService = game:GetService("UserInputService")
+local runService = game:GetService("RunService")
+
+local followBall = false
+local isMovingManually = false
+local infDribbleEnabled = false 
+
+local function follow()
+    if followBall and not isMovingManually and infDribbleEnabled then
+        character.Humanoid:MoveTo(ball.Position)
+    end
+end
+
+userInputService.InputEnded:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.Keyboard or input.UserInputType == Enum.UserInputType.MouseMovement then
+        isMovingManually = false
+    end
+end)
+
+userInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.B and not gameProcessed and infDribbleEnabled then
+        followBall = not followBall
+    end
+end)
+
+runService.RenderStepped:Connect(function()
+    if followBall and infDribbleEnabled then
+        follow()
+    end
+end)
+
+player.CharacterAdded:Connect(function(char)
+    character = char
+end)
+
+Helpers:Toggle({
+    Title = "Enable / Disable Inf Dribble Helper [PC]",
+    Desc = "Toggle it by pressing (B)",
+    Default = false,
+    Callback = function(state)
+        infDribbleEnabled = state
+        if not state then
+            followBall = false
+        end
+    end
+})
+
+Helpers:Toggle({
+    Title = "Enable / Disable Inf Dribble Helper [MOB]",
+    Desc = "it will make a GUI in your screen to control it.",
+    Default = false,
+    Callback = function(Value)
+        infDribbleEnabled = Value
+
+        if Value then
+            local screenGui = Instance.new("ScreenGui")
+            screenGui.Name = "InfDribbleGui"
+            screenGui.ResetOnSpawn = false
+            screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+            local toggleButton = Instance.new("TextButton")
+            toggleButton.Name = "InfDribbleButton"
+            toggleButton.Size = UDim2.new(0, 120, 0, 40)
+            toggleButton.Position = UDim2.new(0, 20, 0.5, -20)
+            toggleButton.Text = "Inf Dribble: OFF"
+            toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            toggleButton.TextColor3 = Color3.new(1, 1, 1)
+            toggleButton.TextScaled = true
+            toggleButton.Parent = screenGui
+
+            toggleButton.MouseButton1Click:Connect(function()
+                followBall = not followBall
+                if followBall then
+                    toggleButton.Text = "Inf Dribble: ON"
+                else
+                    toggleButton.Text = "Inf Dribble: OFF"
+                end
+            end)
+        else
+            followBall = false
+            local playerGui = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+            if playerGui then
+                local screenGui = playerGui:FindFirstChild("InfDribbleGui")
+                if screenGui then
+                    screenGui:Destroy()
+                end
+            end
+        end
+    end
+})
+
+-- ====================== BALL MODS TAB ======================
+BallMods:Section({ Title = "Ball Modifications" })
+
+BallMods:Input({
+    Title = "Ball Size",
+    Desc = "",
+    Value = "2.6",
+    Type = "Textarea",
+    Placeholder = "Size",
+    Callback = function(size) 
+        workspace.TPSSystem.TPS.Size = Vector3.new(size, size, size)
+    end
+})
+
+BallMods:Button({
+    Title = "Anti-Ball Fling",
+    Justify = "Center",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local runService = game:GetService("RunService")
+        local Clip = false
+        wait(0.1)
+        
+        local function noclipFunction()
+            if not Clip and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide and (part.Name == "Right Leg" or part.Name == "Right Arm" or part.Name == "Left Arm" or part.Name == "Torso") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end
+        
+        local noclipConnection = runService.Stepped:Connect(noclipFunction)  
+    end
+})
+
+local RunService = game:GetService("RunService")
+local ball = workspace.TPSSystem.TPS
+local gravity = workspace.Gravity or 196.2
+
+local predictionDuration = 0.5   
+local timeStep = 0.05            
+local predictionParts = {}
+local lineParts = {}
+
+local function createOrGetPart(list, index, size, color, transparency)
+    if list[index] then
+        return list[index]
+    else
+        local part = Instance.new("Part")
+        part.Anchored = true
+        part.CanCollide = false
+        part.Size = size
+        part.Material = Enum.Material.Neon
+        part.Color = color
+        part.Transparency = transparency
+        part.CastShadow = false
+        part.Parent = workspace
+        list[index] = part
+        return part
+    end
+end
+
+local connection
+
+BallMods:Toggle({
+    Title = "Enable / Disable Ball Prediction",
+    Default = false,
+    Callback = function(state)
+        if state then
+            if connection then connection:Disconnect() end
+
+            connection = RunService.Heartbeat:Connect(function()
+                if not ball or not ball:IsA("BasePart") then return end
+
+                local startPos = ball.Position
+                local startVel = ball.Velocity
+                local pointsCount = math.floor(predictionDuration / timeStep)
+                local positions = {}
+
+                for i = 1, pointsCount do
+                    local t = i * timeStep
+                    local predictedPos = startPos + (startVel * t) + Vector3.new(0, -0.5 * gravity * t * t, 0)
+                    positions[i] = predictedPos
+
+                    local pointPart = createOrGetPart(predictionParts, i, Vector3.new(0.3,0.3,0.3), Color3.fromRGB(0,255,0), 0.4)
+                    pointPart.CFrame = CFrame.new(predictedPos)
+                    pointPart.Transparency = 0.4
+                end
+
+                for i = 1, pointsCount - 1 do
+                    local pos1 = positions[i]
+                    local pos2 = positions[i + 1]
+                    local direction = pos2 - pos1
+                    local distance = direction.Magnitude
+                    local midPoint = pos1 + direction / 2
+                    local linePart = createOrGetPart(lineParts, i, Vector3.new(0.1,0.1,distance), Color3.fromRGB(0,255,0), 0.6)
+                    linePart.CFrame = CFrame.new(midPoint, pos2)
+                    linePart.Transparency = 0.6
+                end
+
+                for i = pointsCount + 1, #predictionParts do
+                    predictionParts[i].Transparency = 1
+                end
+                for i = pointsCount, #lineParts do
+                    lineParts[i].Transparency = 1
+                end
+            end)
+        else
+            if connection then connection:Disconnect() end
+            connection = nil
+            for _, part in pairs(predictionParts) do
+                part.Transparency = 1
+            end
+            for _, part in pairs(lineParts) do
+                part.Transparency = 1
+            end
+        end
+    end
+})
+
+BallMods:Toggle({
+    Title = "Enable / Disable Ball Collision",
+    Default = false,
+    Callback = function(state)
+        if state then
+            local TPS = workspace:WaitForChild("TPSSystem"):WaitForChild("TPS")
+
+            local follower = Instance.new("Part")
+            follower.Name = "FollowerPart"
+            follower.Shape = Enum.PartType.Ball
+            follower.Anchored = true
+            follower.CanCollide = true
+            follower.Material = Enum.Material.Air
+            follower.Color = TPS.Color
+            follower.Parent = workspace
+
+            local RunService = game:GetService("RunService")
+
+            RunService.Heartbeat:Connect(function()
+                if TPS then
+                    follower.Size = TPS.Size
+                    follower.CFrame = TPS.CFrame
+                    follower.Color = TPS.Color
+                end
+            end)
+        else 
+            if workspace:FindFirstChild("FollowerPart") then 
+                workspace.FollowerPart:Destroy()
+            end
+        end
+    end
+})
+
+BallMods:Dropdown({
+    Title = "Ball Texture",
+    Values = {
+        {
+            Title = "Default",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ball = game.Workspace.TPSSystem.TPS
+                ball.Decal1.Texture = "rbxassetid://1731401359"
+                ball.Decal2.Texture = "rbxassetid://1731401359"
+                ball.Decal3.Texture = "rbxassetid://1731401811"
+                ball.Decal4.Texture = "rbxassetid://1731401811"
+                ball.Decal5.Texture = "rbxassetid://1731401359"
+                ball.Decal6.Texture = "rbxassetid://1731401359"
+            end
+        },
+        {
+            Title = "Addidas Brazuca",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ball = game.Workspace.TPSSystem.TPS
+                ball.Decal1.Texture = "http://www.roblox.com/asset/?id=137668136"
+                ball.Decal2.Texture = "http://www.roblox.com/asset/?id=137668129"
+                ball.Decal3.Texture = "http://www.roblox.com/asset/?id=137668136"
+                ball.Decal4.Texture = "http://www.roblox.com/asset/?id=137668136"
+                ball.Decal5.Texture = "http://www.roblox.com/asset/?id=137668136"
+            end
+        },
+        {
+            Title = "Addidas Jabulani",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ball = game.Workspace.TPSSystem.TPS
+                ball.Decal1.Texture = "http://www.roblox.com/asset/?id=76614961"
+                ball.Decal2.Texture = "http://www.roblox.com/asset/?id=76614961"
+                ball.Decal3.Texture = "http://www.roblox.com/asset/?id=76614961"
+                ball.Decal4.Texture = "http://www.roblox.com/asset/?id=76614961"
+                ball.Decal5.Texture = "http://www.roblox.com/asset/?id=76614961"
+                ball.Decal6.Texture = "http://www.roblox.com/asset/?id=76614961"
+            end
+        },
+    }
+})
+
+BallMods:Dropdown({
+    Title = "Ball Sound",
+    Values = {
+        {
+            Title = "Default",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ballSound = game.Workspace.TPSSystem.TPS.Sound
+                ballSound.SoundId = "rbxassetid://2516069845"
+                ballSound.PlaybackSpeed = 0.7
+                ballSound.Volume = 0.7
+            end
+        },
+        {
+            Title = "OOF !",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ballSound = game.Workspace.TPSSystem.TPS.Sound
+                ballSound.SoundId = "rbxassetid://5143383166"
+                ballSound.PlaybackSpeed = 1
+                ballSound.Volume = 2
+            end
+        },
+        {
+            Title = "Neverloose",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ballSound = game.Workspace.TPSSystem.TPS.Sound
+                ballSound.SoundId = "rbxassetid://6607204501"
+                ballSound.PlaybackSpeed = 0.7
+                ballSound.Volume = 0.7
+            end
+        },
+        {
+            Title = "Rust",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ballSound = game.Workspace.TPSSystem.TPS.Sound
+                ballSound.SoundId = "rbxassetid://1255040462"
+                ballSound.PlaybackSpeed = 0.7
+                ballSound.Volume = 0.7
+            end
+        },
+        {
+            Title = "Bruh",
+            Desc = "",
+            Icon = "",
+            Callback = function() 
+                local ballSound = game.Workspace.TPSSystem.TPS.Sound
+                ballSound.SoundId = "rbxassetid://4275842574"
+                ballSound.PlaybackSpeed = 0.7
+                ballSound.Volume = 0.7
+            end
+        },
+    }
+})
+
+-- ====================== TELEPORTING TAB ======================
+Teleport:Section({ Title = "Ball Teleporting" })
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local TPS = workspace:WaitForChild("TPSSystem"):WaitForChild("TPS")
+
+local Target = nil
+local teleporting = false
+local connection
+
+Teleport:Toggle({
+    Title = "Loop Teleporting to the Ball",
+    Desc = "Continuously teleports you near the ball",
+    Default = false,
+    Callback = function(state)
+        teleporting = state
+
+        if teleporting then
+            connection = RunService.Heartbeat:Connect(function()
+                local character = player.Character
+                if character then
+                    local hrp = character:FindFirstChild("HumanoidRootPart")
+                    if hrp and TPS then
+                        local offset = -TPS.CFrame.LookVector * 5 + Vector3.new(0, 3, 0)
+                        hrp.CFrame = TPS.CFrame + offset
+                    end
+                end
+            end)
+        else
+            if connection then
+                connection:Disconnect()
+                connection = nil
+            end
+        end
+    end
+})
+
+Teleport:Section({ Title = "Player Teleporting" })
+
+Teleport:Input({
+    Title = "Target Player Username",
+    Callback = function(value)
+        local targetPlayer = Players:FindFirstChild(value)
+        Target = targetPlayer
+    end
+})
+
+Teleport:Button({
+    Title = "Teleport To Player",
+    Justify = "Center",
+    Callback = function()
+        if Target
+        and player.Character
+        and Target.Character
+        and player.Character:FindFirstChild("HumanoidRootPart")
+        and Target.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame =
+                Target.Character.HumanoidRootPart.CFrame
+        end
+    end
+})
+
+Teleport:Button({
+    Title = "Teleport To Red Goal",
+    Justify = "Center",
+    Callback = function()
+        local char = player.Character or player.CharacterAdded:Wait()
+        local hrp = char:WaitForChild("HumanoidRootPart")
+        hrp.CFrame = workspace.RedGoal.Part.CFrame + Vector3.new(0, 3, 0)
+    end
+})
+
+Teleport:Button({
+    Title = "Teleport To Blue Goal",
+    Justify = "Center",
+    Callback = function()
+        local char = player.Character or player.CharacterAdded:Wait()
+        local hrp = char:WaitForChild("HumanoidRootPart")
+        hrp.CFrame = workspace.BlueGoal.Part.CFrame + Vector3.new(0, 3, 0)
+    end
+})
+
 -- ====================== CEZAR 5% TAB ======================
 local cezar5Enabled = false
 
@@ -588,7 +1363,5 @@ Cezar5:Toggle({
     end
 })
 
--- Add all the other tabs from the original script (Player, Helpers, BallMods, etc.)
--- ... (keeping the rest of the content from the original script)
-
 Window:Open()
+
